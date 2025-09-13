@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nhập mã bảo mật – Demo</title>
+  <style>
+    :root{
+      --bg:#e9ebee;
+      --card:#fff;
+      --text:#1c1e21;
+      --muted:#6b6f76;
+      --brand:#0866ff;
+      --btn:#1877f2;
+      --btn-hover:#225ad1;
+      --btn-cancel:#e4e6eb;
+      --border:#d9dce1;
+      --shadow:0 2px 12px rgba(0,0,0,.08);
+      --radius:8px;
+      --card-w:500px;
+
+      --alert-err-bg:#fff2f3;
+      --alert-err-border:#f02849;
+      --alert-err-text:#1c1e21;
+      --alert-err-icon:#f02849;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    header{
+      height:56px; display:flex; align-items:center; padding:0 24px; background:#fff;
+    }
+    .brand{ font-size:27px; font-weight:700; letter-spacing:.2px; color:var(--brand); text-transform:lowercase; user-select:none; }
+
+    .main{
+      min-height:calc(100vh - 160px);
+      padding-top:72px;
+      display:grid; place-items:start center;
+    }
+    .card{
+      width:min(100%,var(--card-w));
+      background:var(--card);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      border:1px solid var(--border);
+    }
+    .card-header{
+      padding:16px 20px;
+      border-bottom:1px solid var(--border);
+      font-weight:700;
+      font-size: larger;
+    }
+    .card-body{ padding:16px 20px; }
+
+    /* Alert lỗi */
+    .alert{
+      display:flex; align-items:flex-start; gap:10px;
+      padding:12px; border:1px solid var(--alert-err-border);
+      background:var(--alert-err-bg);
+      color:var(--alert-err-text);
+      border-radius:6px;
+      margin:0 0 12px 0;
+    }
+    .alert-icon{ flex:0 0 auto; line-height:0; color:var(--alert-err-icon); }
+    .alert h4{ margin:0 0 2px 0; font-size:14px; font-weight:700; }
+    .alert p{ margin:0; font-size:13px; line-height:1.35; }
+    .hidden{ display:none !important; }
+
+    .desc{ color:#050505; font-size:15px; line-height:1.4; margin:0 0 14px; font-weight:400; }
+
+    .code-row{ display:flex; gap:16px; align-items:flex-start; margin-bottom:14px; }
+    .field{ position:relative; flex:0 0 auto; }
+    .input{
+      width:240px; height:40px; padding:0 12px;
+      border:1px solid var(--border); border-radius:6px;
+      font-size:14px; outline:none; background:#fff;
+      transition:border-color .2s, box-shadow .2s;
+    }
+    .input:focus{ border-color:#b6b9c0; box-shadow:0 0 0 3px rgba(43,111,232,.12); }
+
+    .hint{ font-size:14px; line-height:1.35; color:#65676b; }
+    .hint b{ color:#050505; }
+
+    .actions{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; margin-top:12px; border-top:1px solid var(--border);
+      margin-left:-20px; margin-right:-20px; padding:14px 16px 12px;
+    }
+    .tiny-link{ font-size:13px; color:var(--brand); text-decoration:none; }
+    .tiny-link:hover{ text-decoration:underline; }
+
+    .btns{ display:flex; gap:8px; }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      height:36px; min-width:90px; padding:0 14px; border:none; border-radius:6px;
+      font-weight:600; font-size:14px; cursor:pointer;
+    }
+    .btn-cancel{ background:var(--btn-cancel); color:#050505; }
+    .btn-cancel:hover{ filter:brightness(.98); }
+    .btn-primary{ background:var(--btn); color:#fff; }
+    .btn-primary:hover{ background:var(--btn-hover); }
+    .btn:focus{ outline:none; box-shadow:0 0 0 3px rgba(43,111,232,.18); }
+
+    @media (max-width:520px){
+      .code-row{ flex-direction:column }
+      .input{ width:100% }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">facebook</div>
+  </header>
+
+  <main class="main">
+    <section class="card" role="region" aria-label="Nhập mã bảo mật">
+      <div class="card-header">Nhập mã bảo mật</div>
+
+      <div class="card-body">
+
+        <!-- Alert lỗi (ẩn mặc định). Sẽ hiện khi mã không hợp lệ hoặc sai với mã demo. -->
+        <div id="alert-invalid" class="alert hidden" role="alert" aria-live="polite">
+          <div class="alert-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2V9h2v5z"/>
+            </svg>
+          </div>
+          <div>
+            <h4 id="alert-title">Bạn đã nhập nhiều hơn 6 số.</h4>
+            <p id="alert-desc">Vui lòng kiểm tra mã của bạn và thử lại.</p>
+          </div>
+        </div>
+
+        <p class="desc">
+          Vui lòng kiểm tra mã trong email của bạn. Mã này gồm 6 số.
+        </p>
+
+        <div class="code-row">
+          <div class="field">
+            <label for="code" class="sr-only" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">Nhập mã</label>
+            <input id="code" class="input" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Nhập mã" autocomplete="one-time-code" />
+          </div>
+
+          <div class="hint" aria-live="polite">
+            <div>Chúng tôi đã gửi mã cho bạn đến:</div>
+            <b>j**@******</b>
+          </div>
+        </div>
+
+        <div class="actions">
+          <a class="tiny-link" href="#" onclick="return false;">Chưa nhận được mã?</a>
+          <div class="btns">
+            <button type="button" class="btn btn-cancel">Thử cách khác</button>
+            <button type="button" class="btn btn-primary" id="btn-continue">Tiếp tục</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Mã demo "đã gửi về mail". Bạn có thể thay đổi giá trị này.
+    const DEMO_CODE = '123456';
+
+    const codeInput  = document.getElementById('code');
+    const btnContinue = document.getElementById('btn-continue');
+    const alertBox   = document.getElementById('alert-invalid');
+    const alertTitle = document.getElementById('alert-title');
+    const alertDesc  = document.getElementById('alert-desc');
+
+    function showAlert(title, desc){
+      alertTitle.textContent = title;
+      alertDesc.textContent  = desc;
+      alertBox.classList.remove('hidden');
+    }
+    function hideAlert(){
+      alertBox.classList.add('hidden');
+    }
+
+    function onContinue(){
+      const v = codeInput.value.trim();
+
+      // Kiểm tra tính hợp lệ theo ảnh
+      if (!/^\d+$/.test(v)) {
+        showAlert('Mã phải là số.', 'Vui lòng kiểm tra mã của bạn và thử lại.');
+        return;
+      }
+      if (v.length > 6) {
+        showAlert('Bạn đã nhập nhiều hơn 6 số.', 'Vui lòng kiểm tra mã của bạn và thử lại.');
+        return;
+      }
+      if (v.length < 6) {
+        showAlert('Bạn đã nhập ít hơn 6 số.', 'Vui lòng kiểm tra mã của bạn và thử lại.');
+        return;
+      }
+
+      // Đúng 6 số nhưng KHÔNG khớp mã demo đã "gửi"
+      if (v !== DEMO_CODE) {
+        showAlert('Mã bạn nhập không đúng.', 'Vui lòng kiểm tra mã và thử lại.');
+        return;
+      }
+
+      // Hợp lệ & khớp
+      hideAlert();
+      alert('Demo only – Xác thực thành công với mã: ' + v);
+    }
+
+    btnContinue.addEventListener('click', onContinue);
+    codeInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); onContinue(); }
+    });
+
+  </script>
+</body>
+</html>
