@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Find your account – Facebook (Demo)</title>
+  <style>
+    :root{
+      --bg:#e9ebee;
+      --card:#fff;
+      --text:#1c1e21;
+      --muted:#6b6f76;
+      --brand:#0866ff;         /* xanh nhấn trung tính */
+      --btn:#1877f2;
+      --btn-hover:#225ad1;
+      --btn-cancel:#e4e6eb;
+      --border:#d9dce1;
+      --shadow:0 2px 12px rgba(0,0,0,.08);
+      --radius:8px;
+      --card-w:500px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    /* Top brand */
+    header{
+      height:56px;
+      display:flex;align-items:center;
+      padding:0 24px;
+    }
+    .brand{
+      font-size:27px;font-weight:700;letter-spacing:.2px;color:var(--brand);
+      text-transform:lowercase; user-select:none;
+    }
+
+    /* Main */
+    .main{
+      min-height:calc(100vh - 160px);
+      padding-top:72px;        /* đẩy hộp xuống gần giống ảnh */
+      display:grid; place-items:start center;
+    }
+
+    .card{
+      width:min(100%,var(--card-w));
+      background:var(--card);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      border:1px solid var(--border);
+    }
+    .card-header{
+      padding:16px 20px;
+      border-bottom:1px solid var(--border);
+      font-weight:700;
+      font-size: larger;
+    }
+    .card-body{padding:16px 20px}
+    .desc{color:black;font-size:17px;line-height:1.3;margin:0 0 12px; font-weight: 400 ;}
+
+    .field{position:relative}
+    .input{
+      width:100%;
+      height:52px;
+      padding:0 12px;
+      border:1px solid var(--border);
+      border-radius:6px;
+      font-size:14px;
+      outline:none;background:#fff;
+      transition:border-color .2s, box-shadow .2s;
+    }
+    .input:focus{border-color:#b6b9c0; box-shadow:0 0 0 3px rgba(43,111,232,.12)}
+
+    .actions{
+  display:flex;justify-content:flex-end;gap:8px;margin-top:12px; border-top: 1px solid var(--border);
+  margin-left: -20px;
+  margin-right: -20px;
+  padding-left: 16px;
+  padding-right: 16px;
+    }
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;
+      height:36px;width: 90px;padding:0 14px;border:none;border-radius:6px;
+      font-weight:600;font-size:14px;cursor:pointer;
+    }
+    .btn-cancel{background:var(--btn-cancel);color:#050505}
+    .btn-cancel:hover{filter:brightness(.98)}
+    .btn-primary{background:var(--btn);color:#fff}
+    .btn-primary:hover{background:var(--btn-hover)}
+    .btn:focus{outline:none;box-shadow:0 0 0 3px rgba(43,111,232,.18)}
+
+    /* Footer */
+    footer{padding:28px 16px;color:#8a8d91}
+    .footer-inner{max-width:980px;margin:0 auto;font-size:12.5px}
+    .langs,.links{
+      display:flex;flex-wrap:wrap;gap:10px 14px;list-style:none;padding:0;margin:0 0 10px;
+    }
+    .langs li,.links li{white-space:nowrap}
+    .sep{margin:0 6px;color:#c9ccd1}
+    .copyright{margin-top:6px}
+  </style>
+</head>
+<body>
+  <header style="background-color:#ffffff; box-shadow: inset;">
+    <div class="brand">facebook</div>
+  </header>
+
+  <main class="main" >
+    <section class="card" role="region" aria-label="Find your account dialog">
+      <div class="card-header">Find your account</div>
+      <div class="card-body">
+        <p class="desc">Please enter your email address or mobile number to search for your account.</p>
+
+        <div class="field">
+          <label for="identifier" class="sr-only" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">Email address or mobile number</label>
+          <input id="identifier" class="input" type="text" placeholder="Email address or mobile number" autocomplete="username" inputmode="email" />
+        </div>
+
+        <div class="actions">
+            <div style="padding-top: 17px;">
+                <button type="button" class="btn btn-cancel" id="btn-cancel">Cancel</button>
+                <button type="button" class="btn btn-primary" id="btn-search">Search</button>
+            </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- <footer>
+    <div class="footer-inner">
+      <ul class="langs">
+        <li>English (UK)</li><li class="sep">·</li>
+        <li>Tiếng Việt</li><li class="sep">·</li>
+        <li>Français (France)</li><li class="sep">·</li>
+        <li>Deutsch</li><li class="sep">·</li>
+        <li>Español</li><li class="sep">·</li>
+        <li>中文(台灣)</li><li class="sep">·</li>
+        <li>한국어</li>
+      </ul>
+      <ul class="links">
+        <li>Sign Up</li><li>Log In</li><li>Messenger</li><li>Help</li><li>Privacy</li><li>Terms</li><li>Developers</li>
+      </ul>
+      <div class="copyright">© 2025 SocialSite Demo</div>
+    </div>
+  </footer> -->
+
+  <script>
+    // Demo only: no network requests, just simple UI behavior
+    const input = document.getElementById('identifier');
+    const btnSearch = document.getElementById('btn-search');
+    const btnCancel = document.getElementById('btn-cancel');
+
+    function search() {
+      const v = input.value.trim();
+      if (!v) {
+        alert('Please enter an email address or mobile number (demo).');
+      } else {
+        alert('Demo only – No search is performed.\nYou typed: ' + v);
+      }
+    }
+    btnSearch.addEventListener('click', search);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); search(); }
+    });
+    btnCancel.addEventListener('click', () => { input.value = ''; input.focus(); });
+  </script>
+</body>
+</html>
