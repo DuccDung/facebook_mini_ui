@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Find your account – Facebook (Demo)</title>
+  <style>
+    :root{
+      --bg:#e9ebee;
+      --card:#fff;
+      --text:#1c1e21;
+      --muted:#6b6f76;
+      --brand:#0866ff;         /* xanh nhấn trung tính */
+      --btn:#1877f2;
+      --btn-hover:#225ad1;
+      --btn-cancel:#e4e6eb;
+      --border:#d9dce1;
+      --shadow:0 2px 12px rgba(0,0,0,.08);
+      --radius:8px;
+      --card-w:500px;
+
+      /* Alert palette */
+      --error-bg:#fde8e8;
+      --error-border:#f3b4b4;
+      --error-text:#6e1c1c;
+
+      --warn-bg:#fde8e8;
+      --warn-border:#f3b4b4;
+      --warn-text:#6e1c1c;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    /* Top brand */
+    header{
+      height:56px;
+      display:flex;align-items:center;
+      padding:0 24px;
+    }
+    .brand{
+      font-size:27px;font-weight:700;letter-spacing:.2px;color:var(--brand);
+      text-transform:lowercase; user-select:none;
+    }
+
+    /* Main */
+    .main{
+      min-height:calc(100vh - 160px);
+      padding-top:72px;        /* đẩy hộp xuống gần giống ảnh */
+      display:grid; place-items:start center;
+    }
+
+    .card{
+      width:min(100%,var(--card-w));
+      background:var(--card);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      border:1px solid var(--border);
+    }
+    .card-header{
+      padding:16px 20px;
+      border-bottom:1px solid var(--border);
+      font-weight:700;
+      font-size: larger;
+    }
+    .card-body{padding:16px 20px}
+    .desc{color:black;font-size:17px;line-height:1.3;margin:0 0 12px; font-weight: 400 ;}
+
+    .field{position:relative}
+    .input{
+      width:100%;
+      height:52px;
+      padding:0 12px;
+      border:1px solid var(--border);
+      border-radius:6px;
+      font-size:14px;
+      outline:none;background:#fff;
+      transition:border-color .2s, box-shadow .2s;
+    }
+    .input:focus{border-color:#b6b9c0; box-shadow:0 0 0 3px rgba(43,111,232,.12)}
+
+    .actions{
+      display:flex;justify-content:flex-end;gap:8px;margin-top:12px; border-top: 1px solid var(--border);
+      margin-left: -20px;
+      margin-right: -20px;
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;
+      height:36px;width: 90px;padding:0 14px;border:none;border-radius:6px;
+      font-weight:600;font-size:14px;cursor:pointer;
+    }
+    .btn-cancel{background:var(--btn-cancel);color:#050505}
+    .btn-cancel:hover{filter:brightness(.98)}
+    .btn-primary{background:var(--btn);color:#fff}
+    .btn-primary:hover{background:var(--btn-hover)}
+    .btn:focus{outline:none;box-shadow:0 0 0 3px rgba(43,111,232,.18)}
+
+    /* Alert styles */
+    .alert{
+      border:1px solid; border-radius:6px;
+      padding:12px 12px;
+      margin:0 0 12px 0;
+    }
+    .alert h4{margin:0 0 4px 0; font-size:14px; font-weight:700;}
+    .alert p{margin:0; font-size:13px; line-height:1.35;}
+    .alert-error{background:var(--error-bg); border-color:var(--error-border); color:var(--error-text)}
+    .alert-warn{background:var(--warn-bg); border-color:var(--warn-border); color:var(--warn-text)}
+    .hidden{display:none !important}
+  </style>
+</head>
+<body>
+  <header style="background-color:#ffffff; box-shadow: inset;">
+    <div class="brand">facebook</div>
+  </header>
+
+  <main class="main" >
+    <section class="card" role="region" aria-label="Find your account dialog">
+      <div class="card-header">Find your account</div>
+      <div class="card-body">
+
+        <!-- Alert khi để trống -->
+        <div id="alert-fill" class="alert alert-warn hidden" role="alert" aria-live="polite">
+          <h4>Please fill in at least one field</h4>
+          <p>Fill in at least one field to search for your account.</p>
+        </div>
+
+        <!-- Alert khi không tìm thấy -->
+        <div id="alert-noresults" class="alert alert-error hidden" role="alert" aria-live="polite">
+          <h4>No search results</h4>
+          <p>Your search did not return any results. Please try again with other information.</p>
+        </div>
+
+        <p class="desc">Please enter your email address or mobile number to search for your account.</p>
+
+        <div class="field">
+          <label for="identifier" class="sr-only" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">Email address or mobile number</label>
+          <input id="identifier" class="input" type="text" placeholder="Email address or mobile number" autocomplete="username" inputmode="email" />
+        </div>
+
+        <div class="actions">
+            <div style="padding-top: 17px;">
+                <button type="button" class="btn btn-cancel" id="btn-cancel">Cancel</button>
+                <button type="button" class="btn btn-primary" id="btn-search">Search</button>
+            </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- <footer> ... giữ nguyên như bạn đã comment ... </footer> -->
+
+  <script>
+    // Demo only: no network requests, just simple UI behavior
+    const input = document.getElementById('identifier');
+    const btnSearch = document.getElementById('btn-search');
+    const btnCancel = document.getElementById('btn-cancel');
+
+    // Alerts
+    const alertFill = document.getElementById('alert-fill');
+    const alertNoResults = document.getElementById('alert-noresults');
+
+    // Demo danh sách "tồn tại"
+    const knownIdentifiers = ['demo@example.com','0912345678'];
+
+    function hideAlerts(){
+      alertFill.classList.add('hidden');
+      alertNoResults.classList.add('hidden');
+    }
+
+    function search() {
+      const v = input.value.trim();
+
+      // 1) Không nhập gì -> hiện cảnh báo điền ít nhất một trường
+      if (!v) {
+        alertNoResults.classList.add('hidden');
+        alertFill.classList.remove('hidden');
+        input.focus({preventScroll:true});
+        return;
+      }
+
+      // 2) Có nhập nhưng không thuộc danh sách demo -> hiện No search results
+      const exists = knownIdentifiers.some(x => x.toLowerCase() === v.toLowerCase());
+      if (!exists) {
+        alertFill.classList.add('hidden');
+        alertNoResults.classList.remove('hidden');
+        return;
+      }
+
+      // 3) Demo: nếu "tìm thấy", ẩn alert và báo thông tin
+      hideAlerts();
+      alert('Demo only – Found a matching account placeholder for: ' + v);
+    }
+
+    btnSearch.addEventListener('click', search);
+
+    // THEO YÊU CẦU: Cancel KHÔNG ẩn alert (chỉ xóa input và focus lại)
+    btnCancel.addEventListener('click', () => {
+      input.value = '';
+      input.focus();
+      // không gọi hideAlerts()
+    });
+
+    // THEO YÊU CẦU: Gõ không ẩn alert
+    // (loại bỏ: input.addEventListener('input', hideAlerts);)
+  </script>
+</body>
+</html>
