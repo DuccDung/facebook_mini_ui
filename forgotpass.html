@@ -18,6 +18,15 @@
       --shadow:0 2px 12px rgba(0,0,0,.08);
       --radius:8px;
       --card-w:500px;
+
+      /* Alert palette */
+      --error-bg:#fde8e8;
+      --error-border:#f3b4b4;
+      --error-text:#6e1c1c;
+
+      --warn-bg:#fde8e8;
+      --warn-border:#f3b4b4;
+      --warn-text:#6e1c1c;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -76,11 +85,11 @@
     .input:focus{border-color:#b6b9c0; box-shadow:0 0 0 3px rgba(43,111,232,.12)}
 
     .actions{
-  display:flex;justify-content:flex-end;gap:8px;margin-top:12px; border-top: 1px solid var(--border);
-  margin-left: -20px;
-  margin-right: -20px;
-  padding-left: 16px;
-  padding-right: 16px;
+      display:flex;justify-content:flex-end;gap:8px;margin-top:12px; border-top: 1px solid var(--border);
+      margin-left: -20px;
+      margin-right: -20px;
+      padding-left: 16px;
+      padding-right: 16px;
     }
     .btn{
       display:inline-flex;align-items:center;justify-content:center;
@@ -93,15 +102,17 @@
     .btn-primary:hover{background:var(--btn-hover)}
     .btn:focus{outline:none;box-shadow:0 0 0 3px rgba(43,111,232,.18)}
 
-    /* Footer */
-    footer{padding:28px 16px;color:#8a8d91}
-    .footer-inner{max-width:980px;margin:0 auto;font-size:12.5px}
-    .langs,.links{
-      display:flex;flex-wrap:wrap;gap:10px 14px;list-style:none;padding:0;margin:0 0 10px;
+    /* Alert styles */
+    .alert{
+      border:1px solid; border-radius:6px;
+      padding:12px 12px;
+      margin:0 0 12px 0;
     }
-    .langs li,.links li{white-space:nowrap}
-    .sep{margin:0 6px;color:#c9ccd1}
-    .copyright{margin-top:6px}
+    .alert h4{margin:0 0 4px 0; font-size:14px; font-weight:700;}
+    .alert p{margin:0; font-size:13px; line-height:1.35;}
+    .alert-error{background:var(--error-bg); border-color:var(--error-border); color:var(--error-text)}
+    .alert-warn{background:var(--warn-bg); border-color:var(--warn-border); color:var(--warn-text)}
+    .hidden{display:none !important}
   </style>
 </head>
 <body>
@@ -113,6 +124,19 @@
     <section class="card" role="region" aria-label="Find your account dialog">
       <div class="card-header">Find your account</div>
       <div class="card-body">
+
+        <!-- Alert khi để trống -->
+        <div id="alert-fill" class="alert alert-warn hidden" role="alert" aria-live="polite">
+          <h4>Please fill in at least one field</h4>
+          <p>Fill in at least one field to search for your account.</p>
+        </div>
+
+        <!-- Alert khi không tìm thấy -->
+        <div id="alert-noresults" class="alert alert-error hidden" role="alert" aria-live="polite">
+          <h4>No search results</h4>
+          <p>Your search did not return any results. Please try again with other information.</p>
+        </div>
+
         <p class="desc">Please enter your email address or mobile number to search for your account.</p>
 
         <div class="field">
@@ -130,23 +154,7 @@
     </section>
   </main>
 
-  <!-- <footer>
-    <div class="footer-inner">
-      <ul class="langs">
-        <li>English (UK)</li><li class="sep">·</li>
-        <li>Tiếng Việt</li><li class="sep">·</li>
-        <li>Français (France)</li><li class="sep">·</li>
-        <li>Deutsch</li><li class="sep">·</li>
-        <li>Español</li><li class="sep">·</li>
-        <li>中文(台灣)</li><li class="sep">·</li>
-        <li>한국어</li>
-      </ul>
-      <ul class="links">
-        <li>Sign Up</li><li>Log In</li><li>Messenger</li><li>Help</li><li>Privacy</li><li>Terms</li><li>Developers</li>
-      </ul>
-      <div class="copyright">© 2025 SocialSite Demo</div>
-    </div>
-  </footer> -->
+  <!-- <footer> ... giữ nguyên như bạn đã comment ... </footer> -->
 
   <script>
     // Demo only: no network requests, just simple UI behavior
@@ -154,19 +162,53 @@
     const btnSearch = document.getElementById('btn-search');
     const btnCancel = document.getElementById('btn-cancel');
 
+    // Alerts
+    const alertFill = document.getElementById('alert-fill');
+    const alertNoResults = document.getElementById('alert-noresults');
+
+    // Demo danh sách "tồn tại"
+    const knownIdentifiers = ['demo@example.com','0912345678'];
+
+    function hideAlerts(){
+      alertFill.classList.add('hidden');
+      alertNoResults.classList.add('hidden');
+    }
+
     function search() {
       const v = input.value.trim();
+
+      // 1) Không nhập gì -> hiện cảnh báo điền ít nhất một trường
       if (!v) {
-        alert('Please enter an email address or mobile number (demo).');
-      } else {
-        alert('Demo only – No search is performed.\nYou typed: ' + v);
+        alertNoResults.classList.add('hidden');
+        alertFill.classList.remove('hidden');
+        input.focus({preventScroll:true});
+        return;
       }
+
+      // 2) Có nhập nhưng không thuộc danh sách demo -> hiện No search results
+      const exists = knownIdentifiers.some(x => x.toLowerCase() === v.toLowerCase());
+      if (!exists) {
+        alertFill.classList.add('hidden');
+        alertNoResults.classList.remove('hidden');
+        return;
+      }
+
+      // 3) Demo: nếu "tìm thấy", ẩn alert và báo thông tin
+      hideAlerts();
+      alert('Demo only – Found a matching account placeholder for: ' + v);
     }
+
     btnSearch.addEventListener('click', search);
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') { e.preventDefault(); search(); }
+
+    // THEO YÊU CẦU: Cancel KHÔNG ẩn alert (chỉ xóa input và focus lại)
+    btnCancel.addEventListener('click', () => {
+      input.value = '';
+      input.focus();
+      // không gọi hideAlerts()
     });
-    btnCancel.addEventListener('click', () => { input.value = ''; input.focus(); });
+
+    // THEO YÊU CẦU: Gõ không ẩn alert
+    // (loại bỏ: input.addEventListener('input', hideAlerts);)
   </script>
 </body>
 </html>
