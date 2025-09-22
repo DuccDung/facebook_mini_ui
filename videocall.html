@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Video Call — Swap Local / Remote (with real remote stream hookup)</title>
+  <link rel="stylesheet" href="https://unpkg.com/lucide-static@latest/font/lucide.css">
+  <style>
+    :root{
+      --bg-overlay: rgba(0,0,0,0.35);
+      --control-bg: rgba(36,37,38,0.93);
+      --danger: #f02849;
+      --control-size: 48px;
+    }
+    html,body{
+      height:100%;
+      margin:0;
+      background:#000;
+      color:#fff;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      overflow:hidden;
+    }
+
+    /* Fullscreen remote / local elements */
+    .video-bg, .local-fullscreen {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      background:#000;
+    }
+
+    /* overlay for contrast */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-overlay);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .fullscreen-btn{
+      position:absolute;
+      top:12px;
+      right:16px;
+      z-index: 10;
+      background:none;
+      border:none;
+      color:#fff;
+      opacity:.85;
+      padding:6px;
+      border-radius:6px;
+      cursor:pointer;
+      pointer-events:auto;
+    }
+    .fullscreen-btn:hover{ background: rgba(255,255,255,0.06); }
+
+    .thumb {
+      position:absolute;
+      right:28px;
+      bottom:140px;
+      width:240px;
+      height: calc(240px * 9 / 16);
+      border-radius:10px;
+      overflow:hidden;
+      background:#111;
+      border:2px solid rgba(255,255,255,0.08);
+      box-shadow:0 6px 20px rgba(0,0,0,0.6);
+      z-index:6;
+      cursor: pointer;
+    }
+    .thumb video{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    @media (max-width:900px){
+      .thumb{ width:200px; height: calc(200px * 9/16); right:18px; bottom:120px; }
+    }
+    @media (max-width:600px){
+      .thumb{ width:140px; height: calc(140px * 9/16); right:12px; bottom:100px; }
+    }
+
+    .bottom-controls{
+      position:absolute;
+      left:0; right:0; bottom:44px;
+      display:flex;
+      justify-content:center;
+      gap:26px;
+      z-index:9;
+      pointer-events:auto;
+    }
+    .control-btn{
+      background:var(--control-bg);
+      border:none;
+      outline:none;
+      border-radius:50%;
+      width:var(--control-size);
+      height:var(--control-size);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      cursor:pointer;
+      box-shadow:0 6px 18px rgba(0,0,0,0.45);
+      transition:transform .12s ease, background .12s;
+    }
+    .control-btn:active{ transform: scale(.96); }
+    .control-btn.red{ background:var(--danger); }
+    .control-btn svg{ width:24px; height:24px; stroke-width:2; display:block; }
+
+    .control-wrap{ display:flex; flex-direction:column; align-items:center; gap:6px; }
+    .control-label{ font-size:12px; color:rgba(255,255,255,0.85); display:none; }
+
+    /* swap state rules */
+    body.local-focused .local-fullscreen { display: block; z-index:0; }
+    body.local-focused #remoteVideo { display: none; }
+    body.local-focused #remoteThumb { display: block; }
+    #remoteThumb { display: none; }
+
+    .control-btn:focus, .thumb:focus { outline: 3px solid rgba(255,255,255,0.06); outline-offset: 3px; }
+  </style>
+</head>
+<body>
+  <!-- REMOTE: background remote video (mock src kept for PHP/devs to inspect) -->
+  <!-- In a real app attach remote MediaStream by calling attachRemoteStream(remoteStream) -->
+  <video id="remoteVideo" class="video-bg" autoplay muted loop playsinline
+         src="https://www.w3schools.com/html/mov_bbb.mp4"></video>
+
+  <!-- When local is focused, the local stream will fill the screen -->
+  <video id="localFull" class="local-fullscreen" autoplay muted playsinline style="display:none"></video>
+
+  <div class="overlay" aria-hidden="true"></div>
+
+  <!-- Fullscreen toggle -->
+  <button class="fullscreen-btn" id="fullscreenBtn" title="Fullscreen" aria-label="Fullscreen">
+    <i class="lucide lucide-maximize-2"></i>
+  </button>
+
+  <!-- Local thumbnail (click to focus your video). Will be shown when local camera is active. -->
+  <div id="localThumb" class="thumb" title="Click to focus your video" aria-label="Local video thumbnail" tabindex="0" style="display:none">
+    <video id="localVideo" autoplay muted playsinline></video>
+  </div>
+
+  <!-- Remote thumbnail shown only when local is fullscreen (click to swap back).
+       This element has a mock src so PHP/devs can inspect it; when a real remote MediaStream
+       is available, attachRemoteStream will set srcObject on both remoteVideo and remoteThumbVideo. -->
+  <div id="remoteThumb" class="thumb" title="Click to focus remote video" aria-label="Remote thumbnail (click to swap)" tabindex="0">
+    <video id="remoteThumbVideo" autoplay muted loop playsinline src="https://www.w3schools.com/html/mov_bbb.mp4"></video>
+  </div>
+
+  <!-- Controls -->
+  <div class="bottom-controls" role="toolbar" aria-label="Call controls">
+    <div class="control-wrap">
+      <button class="control-btn" id="shareBtn" title="Share screen" aria-label="Share screen">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="lucide lucide-screen-share"><path d="M13 3H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-3"/><path d="M8 21h8"/><path d="M12 17v4"/><path d="m17 8 5-5"/><path d="M17 3h5v5"/></svg>
+      </button>
+    </div>
+
+    <div class="control-wrap">
+      <button class="control-btn" id="addBtn" title="Add person" aria-label="Add person">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="lucide lucide-user-round-plus"><path d="M2 21a8 8 0 0 1 13.292-6"/><circle cx="10" cy="8" r="5"/><path d="M19 16v6"/><path d="M22 19h-6"/></svg>
+      </button>
+    </div>
+
+    <div class="control-wrap">
+      <button class="control-btn" id="toggleVideoBtn" title="Toggle video" aria-label="Toggle video" aria-pressed="false">
+        <!-- icon injected by script -->
+      </button>
+    </div>
+
+    <div class="control-wrap">
+      <button class="control-btn" id="muteBtn" title="Mute" aria-label="Mute" aria-pressed="false">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="lucide lucide-mic-off"><path d="M12 19v3"/><path d="M15 9.34V5a3 3 0 0 0-5.68-1.33"/><path d="M16.95 16.95A7 7 0 0 1 5 12v-2"/><path d="M18.89 13.23A7 7 0 0 0 19 12v-2"/><path d="m2 2 20 20"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12"/></svg>
+      </button>
+    </div>
+
+    <div class="control-wrap">
+      <!-- End call: this is the button that ends the call -->
+      <button class="control-btn red" id="hangupBtn" title="End call" aria-label="End call">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Two exact SVGs provided earlier (for toggle video)
+    const VIDEO_OFF_SVG = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           class="lucide lucide-video-off">
+        <path d="M10.66 6H14a2 2 0 0 1 2 2v2.5l5.248-3.062A.5.5 0 0 1 22 7.87v8.196"/>
+        <path d="M16 16a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h2"/>
+        <path d="m2 2 20 20"/>
+      </svg>`.trim();
+
+    const VIDEO_ON_SVG = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           class="lucide lucide-video-on">
+        <path d="M10.66 6H14a2 2 0 0 1 2 2v2.5l5.248-3.062A.5.5 0 0 1 22 7.87v8.196"/>
+        <path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/>
+        <rect x="2" y="6" width="14" height="12" rx="2"/>
+      </svg>`.trim();
+
+    // DOM refs
+    const toggleVideoBtn = document.getElementById('toggleVideoBtn');
+    const localThumb = document.getElementById('localThumb');
+    const localVideo = document.getElementById('localVideo');
+    const localFull = document.getElementById('localFull');
+    const remoteVideo = document.getElementById('remoteVideo');
+    const remoteThumbVideo = document.getElementById('remoteThumbVideo');
+    const remoteThumb = document.getElementById('remoteThumb');
+    const hangupBtn = document.getElementById('hangupBtn');
+    const muteBtn = document.getElementById('muteBtn');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+    // state
+    let cameraStream = null;
+    let cameraEnabled = false;
+    let audioMuted = true;
+    let localFocused = false; // whether local is shown fullscreen (swap state)
+    let remoteStreamAttached = false;
+
+    function updateVideoButtonUI(){
+      if (cameraEnabled) {
+        toggleVideoBtn.innerHTML = VIDEO_ON_SVG;
+        toggleVideoBtn.setAttribute('aria-pressed','true');
+      } else {
+        toggleVideoBtn.innerHTML = VIDEO_OFF_SVG;
+        toggleVideoBtn.setAttribute('aria-pressed','false');
+      }
+    }
+
+    async function startCamera(){
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1280 }, height: { ideal: 720 } }, audio: true });
+        cameraStream = stream;
+        localVideo.srcObject = stream;
+        localFull.srcObject = stream;
+        await localVideo.play().catch(()=>{});
+        await localFull.play().catch(()=>{});
+        localThumb.style.display = 'block';
+        cameraEnabled = true;
+        updateVideoButtonUI();
+      } catch (err) {
+        cameraStream = null;
+        localVideo.srcObject = null;
+        localFull.srcObject = null;
+        localThumb.style.display = 'none';
+        cameraEnabled = false;
+        updateVideoButtonUI();
+        console.warn('Camera not available / permission denied:', err);
+      }
+    }
+
+    function stopCamera(){
+      if (cameraStream) cameraStream.getTracks().forEach(t => t.stop());
+      cameraStream = null;
+      localVideo.srcObject = null;
+      localFull.srcObject = null;
+      localThumb.style.display = 'none';
+      cameraEnabled = false;
+      updateVideoButtonUI();
+      if (localFocused) toggleLocalFocus(false);
+    }
+
+    async function toggleCamera(){
+      if (cameraEnabled) stopCamera();
+      else await startCamera();
+    }
+
+    function toggleMute(){
+      audioMuted = !audioMuted;
+      muteBtn.setAttribute('aria-pressed', String(!audioMuted));
+      if (cameraStream) cameraStream.getAudioTracks().forEach(t => t.enabled = !audioMuted);
+      muteBtn.style.opacity = audioMuted ? '0.9' : '1';
+    }
+
+    // Attach a remote MediaStream coming from a PeerConnection.
+    // Usage in real app:
+    //   pc.ontrack = (event) => { attachRemoteStream(event.streams[0]); }
+    // or when you already have a MediaStream: attachRemoteStream(remoteStream)
+    function attachRemoteStream(stream) {
+      if (!stream) return;
+      remoteVideo.srcObject = stream;
+      remoteThumbVideo.srcObject = stream;
+      remoteStreamAttached = true;
+      // If currently local-focused, ensure remoteThumb is visible;
+      // otherwise remote background will show the remoteVideo (srcObject takes precedence over src attr).
+      if (localFocused) remoteThumb.style.display = 'block';
+      console.info('Remote stream attached to UI.');
+    }
+
+    // Detach remote stream from UI (keeps mock src for PHP/dev inspection)
+    function detachRemoteStream() {
+      // Do not stop tracks here — tracks belong to remote peer. Just clear UI reference.
+      remoteVideo.srcObject = null;
+      remoteThumbVideo.srcObject = null;
+      remoteStreamAttached = false;
+      console.info('Remote stream detached from UI; mock video remains as fallback.');
+      // remoteVideo will fallback to its src (mock) if needed
+    }
+
+    // Toggle local focus (swap local <-> remote)
+    function toggleLocalFocus(forceState = undefined){
+      if (!cameraEnabled && forceState !== false) return;
+      localFocused = typeof forceState === 'boolean' ? forceState : !localFocused;
+      document.body.classList.toggle('local-focused', localFocused);
+
+      if (localFocused) {
+        localFull.style.display = 'block';
+        remoteThumb.style.display = 'block';
+        localThumb.style.display = 'none';
+      } else {
+        localFull.style.display = 'none';
+        remoteThumb.style.display = 'none';
+        if (cameraEnabled) localThumb.style.display = 'block';
+      }
+    }
+
+    // click handlers for swapping
+    localThumb.addEventListener('click', () => toggleLocalFocus(true));
+    localThumb.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleLocalFocus(true); } });
+    remoteThumb.addEventListener('click', () => toggleLocalFocus(false));
+    remoteThumb.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleLocalFocus(false); } });
+
+    // Hangup: stop local camera, clear UI streams, emit hangup event and call server endpoint (example).
+    function hangup(){
+      stopCamera();
+      // Detach remote from UI but don't stop remote tracks (remote peer owns them)
+      detachRemoteStream();
+
+      // Dispatch a custom DOM event so app integration code (PHP/JS) can listen
+      const ev = new CustomEvent('call:ended', { detail: { reason: 'user_hangup' }});
+      window.dispatchEvent(ev);
+
+      // Example: notify server (PHP) about hangup via fetch.
+      // Replace '/call/hangup' and payload according to your backend API.
+      // Uncomment and adapt as needed:
+      /*
+      fetch('/call/hangup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ callId: 'REPLACE_WITH_CALL_ID', action: 'end' }),
+      }).then(r => console.log('Server acknowledged hangup', r)).catch(err => console.warn('Hangup notify failed', err));
+      */
+
+      console.log('Call ended by user (UI cleaned).');
+    }
+
+    // Document fullscreen toggle
+    function toggleFullScreen(){
+      const doc = window.document;
+      const el = doc.documentElement;
+      const isFull = !!(doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement);
+      if (!isFull) {
+        if (el.requestFullscreen) el.requestFullscreen();
+        else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+        else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
+        else if (el.msRequestFullscreen) el.msRequestFullscreen();
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+        else if (document.msExitFullscreen) document.msExitFullscreen();
+      }
+    }
+
+    // Wire buttons
+    toggleVideoBtn.addEventListener('click', async () => { await toggleCamera(); });
+    muteBtn.addEventListener('click', toggleMute);
+    hangupBtn.addEventListener('click', hangup);
+    fullscreenBtn.addEventListener('click', toggleFullScreen);
+
+    // Initialization: set icons and try to get camera (best-effort)
+    (function init(){
+      updateVideoButtonUI();
+      // Best-effort: attempt to start camera on load; user gesture may be required in some browsers.
+      startCamera().catch(()=>{});
+      // Note for integrators: call attachRemoteStream(remoteStream) when you receive remote MediaStream
+      // from your PeerConnection (pc.ontrack or similar). For example:
+      //
+      // pc.ontrack = (event) => {
+      //   const stream = event.streams && event.streams[0];
+      //   if (stream) attachRemoteStream(stream);
+      // };
+      //
+      // This demo keeps the mock remote src values so PHP/devs can inspect a working page without WebRTC.
+    })();
+
+    // Expose helper functions for integration
+    window.callUI = {
+      attachRemoteStream,
+      detachRemoteStream,
+      startCamera,
+      stopCamera,
+      toggleLocalFocus,
+      hangup,
+    };
+  </script>
+</body>
+</html>

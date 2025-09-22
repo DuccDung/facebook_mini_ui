@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Call In Progress Demo</title>
+  <link rel="stylesheet" href="https://unpkg.com/lucide-static@latest/font/lucide.css">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: #000;
+      color: #fff;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+    body {
+      width: 100vw; height: 100vh;
+    }
+    .bg-blur {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      filter: blur(28px) brightness(0.7);
+      pointer-events: none;
+      user-select: none;
+      transition: filter .3s;
+    }
+    .fullscreen-btn {
+      position: absolute;
+      top: 15px;
+      right: 18px;
+      background: none;
+      border: none;
+      color: #fff;
+      opacity: 0.7;
+      padding: 4px;
+      border-radius: 3px;
+      cursor: pointer;
+      z-index: 2;
+      transition: background 0.18s;
+      font-size: 21px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .fullscreen-btn:hover {
+      background: rgba(255,255,255,0.12);
+      opacity: 1;
+    }
+    .avatar-center {
+      display: flex;
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+    .avatar-large {
+      width: 98px;
+      height: 98px;
+      border-radius: 50%;
+      border: 4px solid #fff;
+      background: #222;
+      object-fit: cover;
+      box-shadow: 0 2px 18px 0 rgba(0,0,0,0.30);
+      transition: box-shadow .2s;
+    }
+    .bottom-controls {
+      position: absolute;
+      left: 0; right: 0; bottom: 44px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 30px;
+      z-index: 2;
+    }
+    .control-btn {
+      background: rgba(36,37,38,0.93);
+      border: none;
+      outline: none;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 24px;
+      margin: 0 2px;
+      cursor: pointer;
+      transition: background 0.14s, color 0.14s;
+      box-shadow: 0 2px 8px 0 #0003;
+    }
+    .control-btn.red {
+      background: #f02849;
+      color: #fff;
+    }
+    .control-btn:active {
+      background: #47494d;
+    }
+    .control-btn.red:active {
+      background: #b81b34;
+    }
+    .control-btn svg {
+      width: 27px;
+      height: 27px;
+      display: block;
+    }
+    @media (max-width: 600px) {
+      .avatar-large { width: 120px; height: 120px; }
+      .bottom-controls { gap: 14px; bottom: 20px;}
+    }
+  </style>
+</head>
+<body>
+  <!-- Background Blur -->
+  <img class="bg-blur" src="https://i.imgur.com/8Km9tLL.png" alt="">
+
+  <!-- Fullscreen button -->
+  <button class="fullscreen-btn" title="Fullscreen" aria-label="Fullscreen">
+    <i class="lucide lucide-maximize-2"></i>
+  </button>
+
+  <!-- Large Avatar Centered -->
+  <div class="avatar-center">
+    <img class="avatar-large" src="https://i.imgur.com/8Km9tLL.png" alt="">
+  </div>
+
+  <!-- Bottom controls (user's code used directly for button icons) -->
+  <div class="bottom-controls">
+    <button class="control-btn" title="share screen" aria-label="Turn off camera">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-screen-share-icon lucide-screen-share"><path d="M13 3H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-3"/><path d="M8 21h8"/><path d="M12 17v4"/><path d="m17 8 5-5"/><path d="M17 3h5v5"/></svg>
+    </button>
+    <button class="control-btn" title="Add person" aria-label="Add person">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-round-plus-icon lucide-user-round-plus"><path d="M2 21a8 8 0 0 1 13.292-6"/><circle cx="10" cy="8" r="5"/><path d="M19 16v6"/><path d="M22 19h-6"/></svg>
+    </button>
+    <button class="control-btn" title="Toggle video" aria-label="Toggle video">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-video-off-icon lucide-video-off"><path d="M10.66 6H14a2 2 0 0 1 2 2v2.5l5.248-3.062A.5.5 0 0 1 22 7.87v8.196"/><path d="M16 16a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h2"/><path d="m2 2 20 20"/></svg>
+    </button>
+    <button class="control-btn" title="Mute" aria-label="Mute">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mic-off-icon lucide-mic-off"><path d="M12 19v3"/><path d="M15 9.34V5a3 3 0 0 0-5.68-1.33"/><path d="M16.95 16.95A7 7 0 0 1 5 12v-2"/><path d="M18.89 13.23A7 7 0 0 0 19 12v-2"/><path d="m2 2 20 20"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12"/></svg>
+    </button>
+    <button class="control-btn red" title="End call" aria-label="End call">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/></svg>
+    </button>
+  </div>
+</body>
+</html>
