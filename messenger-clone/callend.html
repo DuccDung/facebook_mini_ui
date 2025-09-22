@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Call Ended — Demo</title>
+
+  <!-- Lucide font (icons used like previous files) -->
+  <link rel="stylesheet" href="https://unpkg.com/lucide-static@latest/font/lucide.css">
+
+  <style>
+    :root{
+      --bg: #000;
+      --text: #fff;
+      --muted: #bfc3c8;
+      --green: #39d24a;
+      --control-bg: rgba(36,37,38,0.93);
+    }
+
+    html,body{
+      height:100%;
+      margin:0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      overflow:hidden;
+    }
+
+    /* center content */
+    .center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -56%);
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .avatar {
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #fff;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+      background: #222;
+      margin-bottom: 12px;
+    }
+
+    .name {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+      text-shadow: 0 2px 8px #0008;
+      pointer-events: none;
+    }
+
+    .status {
+      font-size: 13px;
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    /* bottom action bar */
+    .action-bar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 36px;
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      z-index: 3;
+      pointer-events: auto;
+    }
+
+    .action {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+      transition: transform .12s ease, opacity .12s ease, background .12s ease;
+      outline: none;
+    }
+
+    .btn:active { transform: scale(.96); }
+
+    .btn.redial {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .btn.close {
+      background: var(--control-bg);
+      color: #fff;
+    }
+
+    .btn .lucide {
+      width: 22px;
+      height: 22px;
+      stroke-width: 2.2;
+      display: block;
+    }
+
+    .label {
+      font-size: 12px;
+      color: var(--muted);
+      user-select: none;
+    }
+
+    /* responsive */
+    @media (max-width: 520px) {
+      .avatar { width: 76px; height: 76px; }
+      .name { font-size: 18px; }
+      .btn { width: 48px; height: 48px; }
+      .action-bar { gap: 12px; bottom: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="center" role="status" aria-live="polite">
+    <img class="avatar" src="https://i.imgur.com/8Km9tLL.png" alt="Caller avatar">
+    <div class="name">Quang Tùng</div>
+    <div class="status">Call ended</div>
+  </div>
+
+  <div class="action-bar" role="toolbar" aria-label="Call actions">
+    <!-- Redial -->
+    <div class="action">
+      <button id="redialBtn" class="btn redial" title="Redial" aria-label="Redial">
+        <!-- Lucide phone icon -->
+         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone-icon lucide-phone"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/></svg>
+      </button>
+      <div class="label">Redial</div>
+    </div>
+
+    <!-- Close -->
+    <div class="action">
+      <button id="closeBtn" class="btn close" title="Close" aria-label="Close">
+        <!-- Lucide x icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-x" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+      </button>
+      <div class="label">Close</div>
+    </div>
+  </div>
+
+  <script>
+    // Buttons: dispatch events so backend or app code can hook them.
+    const redialBtn = document.getElementById('redialBtn');
+    const closeBtn = document.getElementById('closeBtn');
+
+    redialBtn.addEventListener('click', () => {
+      // custom event for integrators
+      window.dispatchEvent(new CustomEvent('call:redial', { detail: { source: 'ui' } }));
+      console.log('call:redial dispatched (UI)');
+      // example: you could call your app code here to restart signaling / call flow
+      // window.callUI && window.callUI.redial && window.callUI.redial();
+    });
+
+    closeBtn.addEventListener('click', () => {
+      // custom event for integrators (close UI)
+      window.dispatchEvent(new CustomEvent('call:close', { detail: { source: 'ui' } }));
+      console.log('call:close dispatched (UI)');
+      // example integration: navigate away or notify server
+      // window.callUI && window.callUI.hangup && window.callUI.hangup();
+    });
+
+    // Optional: keyboard accessibility (Enter/Space)
+    [redialBtn, closeBtn].forEach(btn => {
+      btn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          btn.click();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
