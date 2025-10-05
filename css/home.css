@@ -11,6 +11,12 @@
   --purple2: #3a00ff;
   --hover-bg: #f2f3f5;
   --active-bg: #e7f3ff;
+  --text: #050505;
+  --icon: #0866ff;      /* Xanh Facebook */
+  --hover-bg: #f0f2f5;
+  --border: #e4e6eb;
+  --sub: #65676b;
+  --icon-size: 35px;     /* << tăng/giảm ở đây */
 }
 
 * {
@@ -247,6 +253,7 @@ html, body {
   width: 100%;
   font-size: 15px;
   text-align: left;
+  
 }
 
 .menu-item:hover {
@@ -254,18 +261,33 @@ html, body {
 }
 
 .menu-icon {
-  width: 36px;
-  height: 36px;
+  width: 50px;
+  height: 50px;
   object-fit: cover;
+  font-size:22px;
+  line-height:1
+}
+.menu-icon span {
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* Icon dạng font (Remix Icon <i>...</i>) -> Xanh */
+.menu-item i{ 
+  color:var(--icon); 
+  font-size:var(--icon-size); 
+  line-height:1; 
+  padding: 12px;
+  padding-bottom: 40px;
 }
 
 .menu-icon.rounded {
-  border-radius: 50%;
+  border-radius: 30%;
 }
 
 .see-more-icon {
-  width: 36px;
-  height: 36px;
+  width: 45px;
+  height: 45px;
   background: var(--border);
   border-radius: 50%;
   display: flex;
