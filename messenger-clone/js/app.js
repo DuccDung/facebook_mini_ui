@@ -1,3 +1,17 @@
+// ===== Navigation handling =====
+document.addEventListener('DOMContentLoaded', function() {
+  // Handle nav-btn clicks
+  const navButtons = document.querySelectorAll('.nav-btn');
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', function() {
+      // Remove active class from all buttons
+      navButtons.forEach(b => b.classList.remove('active'));
+      // Add active class to clicked button
+      this.classList.add('active');
+    });
+  });
+});
+
 // ===== Demo data & state =====
 const threads = [
   { id: 1, name: "Hue Do", snippet: "Hue đã gửi một file đính kèm.", time: "3 giờ", avatar: "assets/images/contact-2.png" },
