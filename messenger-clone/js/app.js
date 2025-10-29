@@ -168,17 +168,49 @@ function formatTime(date) {
   const hours = Math.floor(diff / 3600000);
   const days = Math.floor(diff / 86400000);
 
+  // Nếu tin nhắn trong vòng 1 giờ: hiển thị tương đối
   if (minutes < 1) return "Vừa xong";
   if (minutes < 60) return `${minutes} phút`;
-  if (hours < 24) return `${hours} giờ`;
-  return `${days} ngày`;
+  
+  // Nếu tin nhắn trong ngày hôm nay (< 24 giờ): hiển thị giờ cụ thể
+  if (hours < 24) {
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+    return `${hour}:${minute.toString().padStart(2, '0')}`;
+  }
+  
+  // Nếu tin nhắn > 1 ngày: hiển thị ngày tháng + giờ
+  if (days < 7) {
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+    return `${days} ngày trước, ${hour}:${minute.toString().padStart(2, '0')}`;
+  }
+  
+  // Nếu > 1 tuần: hiển thị ngày/tháng
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  return `${day}/${month}`;
 }
 
 function shouldShowTimestamp(prevTimestamp, currentTimestamp) {
   if (!prevTimestamp) return false;
   const diff = Math.abs(currentTimestamp - prevTimestamp);
-  // Hiển thị timestamp nếu cách nhau hơn 5 phút (300000ms)
-  return diff > 300000;
+  // Hiển thị timestamp divider nếu cách nhau hơn 15 phút (900000ms)
+  return diff > 900000; // 15 phút
+}
+
+function getMessageSpacing(prevTimestamp, currentTimestamp) {
+  if (!prevTimestamp) return 'normal';
+  const diff = Math.abs(currentTimestamp - prevTimestamp);
+  
+  // < 1 phút: sát nhau
+  if (diff < 60000) return 'tight';
+  
+  // > 1 phút và < 15 phút: khoảng cách xa hơn
+  if (diff < 900000) return 'spaced';
+  
+  // > 15 phút: có timestamp divider
+  return 'normal';
 }
 
 function renderMessages(){
@@ -191,14 +223,18 @@ function renderMessages(){
       prevMsg?.timestamp, 
       m.timestamp
     );
+    const spacing = getMessageSpacing(
+      prevMsg?.timestamp,
+      m.timestamp
+    );
     
-    appendMessage(m.text, m.side, false, m.timestamp, showTimestamp);
+    appendMessage(m.text, m.side, false, m.timestamp, showTimestamp, spacing);
   });
   
   scroller.scrollTop = scroller.scrollHeight;
 }
 
-function appendMessage(text, side='right', push=true, timestamp=null, showTimestamp=false){
+function appendMessage(text, side='right', push=true, timestamp=null, showTimestamp=false, spacing='normal'){
   // Nếu cần hiển thị timestamp ở giữa
   if (showTimestamp && timestamp) {
     const timeDiv = document.createElement('div');
@@ -209,6 +245,13 @@ function appendMessage(text, side='right', push=true, timestamp=null, showTimest
 
   const wrap = document.createElement('div');
   wrap.className = 'bubble-group';
+  
+  // Thêm class spacing
+  if (spacing === 'tight') {
+    wrap.classList.add('spacing-tight');
+  } else if (spacing === 'spaced') {
+    wrap.classList.add('spacing-spaced');
+  }
   
   const msg = document.createElement('div');
   msg.className = 'msg ' + (side === 'left' ? 'left' : 'right');
@@ -312,8 +355,9 @@ function simulateTyping() {
     const now = new Date();
     const lastMsg = activeThread?.messages?.[activeThread.messages.length - 1];
     const showTimestamp = shouldShowTimestamp(lastMsg?.timestamp, now);
+    const spacing = getMessageSpacing(lastMsg?.timestamp, now);
     
-    appendMessage(randomResponse, 'left', true, now, showTimestamp);
+    appendMessage(randomResponse, 'left', true, now, showTimestamp, spacing);
     
     // Cập nhật snippet
     activeThread.snippet = randomResponse;
@@ -386,8 +430,9 @@ function sendMessage(){
   const lastMsg = activeThread?.messages?.[activeThread.messages.length - 1];
   const now = new Date();
   const showTimestamp = shouldShowTimestamp(lastMsg?.timestamp, now);
+  const spacing = getMessageSpacing(lastMsg?.timestamp, now);
 
-  appendMessage(text, 'right', true, now, showTimestamp);
+  appendMessage(text, 'right', true, now, showTimestamp, spacing);
 
   // Cập nhật snippet/time + đẩy lên đầu
   activeThread.snippet = "Bạn: " + text;

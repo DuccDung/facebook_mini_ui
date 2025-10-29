@@ -342,6 +342,15 @@ body{
   margin-bottom: 2px;
 }
 
+/* Spacing variants */
+.bubble-group.spacing-tight {
+  margin-bottom: 1px; /* Sát nhau hơn cho tin nhắn < 1 phút */
+}
+
+.bubble-group.spacing-spaced {
+  margin-bottom: 12px; /* Khoảng cách xa hơn cho tin nhắn 1-15 phút */
+}
+
 /* Tooltip thời gian khi hover */
 .message-time-tooltip {
   position: absolute;
