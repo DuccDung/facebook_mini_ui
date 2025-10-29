@@ -72,6 +72,7 @@ const newMsgBtn = document.getElementById('newMsgBtn');
 
 // Typing indicator element
 let typingIndicatorElement = null;
+let userTypingTimeout = null; // Timeout để track user typing
 
 // Thanh "Đến:" & composer
 const toBar = document.getElementById("toBar");
@@ -276,27 +277,37 @@ function hideTypingIndicator() {
   }
 }
 
-// Simulate typing from other person (for demo)
+// Simulate typing from other person - response sau khi user gửi tin
 function simulateTyping() {
   if (!activeThread) return;
   
   showTypingIndicator();
   
-  // Sau 2-4 giây, gửi tin nhắn và ẩn typing indicator
-  const delay = 2000 + Math.random() * 2000;
+  // Chọn tin nhắn sẽ gửi
+  const responses = [
+    "Ok",
+    "Oke bạn ơi",
+    "Mình hiểu rồi",
+    "Được đó",
+    "Ok nha",
+    "Cảm ơn bạn nhé",
+    "Uhm, mình đang bận một chút, chờ mình tí nha",
+    "À được rồi, để mình xem xét và trả lời bạn sau nhé",
+    "Cảm ơn bạn đã chia sẻ thông tin này, mình sẽ xem xét kỹ và phản hồi lại bạn sớm nhất có thể"
+  ];
+  const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+  
+  // Tính thời gian typing dựa trên độ dài tin nhắn
+  const baseDelay = 500; // Delay cơ bản (thời gian suy nghĩ)
+  const typingSpeed = 100; // ms per character (tốc độ gõ)
+  const messageLength = randomResponse.length;
+  const typingTime = baseDelay + (messageLength * typingSpeed);
+  
+  // Giới hạn tối đa 5 giây, tối thiểu 1 giây
+  const delay = Math.min(Math.max(typingTime, 1000), 5000);
+  
   setTimeout(() => {
     hideTypingIndicator();
-    
-    // Thêm tin nhắn từ đối phương
-    const responses = [
-      "Oke bạn ơi",
-      "Mình hiểu rồi",
-      "Được đó",
-      "Ok nha",
-      "Cảm ơn bạn",
-      "Uhm"
-    ];
-    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
     
     const now = new Date();
     const lastMsg = activeThread?.messages?.[activeThread.messages.length - 1];
@@ -360,6 +371,12 @@ function sendMessage(){
   const text = msgInput.value.trim();
   if (!text) return;
 
+  // Clear timeout nếu đang có
+  if (userTypingTimeout) {
+    clearTimeout(userTypingTimeout);
+    userTypingTimeout = null;
+  }
+
   // Nếu đang tạo mới, đảm bảo có thread nháp sẵn để nhận tin
   if (isComposingNew && selectedRecipients.length > 0){
     ensureDraftThread();
@@ -395,10 +412,10 @@ function sendMessage(){
     draftThreadId = null; // thread nháp đã trở thành thread thật
   }
   
-  // Simulate typing response (có thể bật/tắt tùy ý)
-    setTimeout(() => {
-      simulateTyping();
-    }, 1000 + Math.random() * 2000);
+  // Simulate đối phương typing và response ngay sau khi gửi
+  setTimeout(() => {
+    simulateTyping();
+  }, 500 + Math.random() * 1000); // Delay ngẫu nhiên 0.5-1.5s
 }
 sendBtn?.addEventListener('click', sendMessage);
 msgInput?.addEventListener('keydown', e => {
@@ -518,13 +535,14 @@ function setActiveThread(id) {
 
   // Ẩn typing indicator khi chuyển thread
   hideTypingIndicator();
+  
+  // Clear timeout
+  if (userTypingTimeout) {
+    clearTimeout(userTypingTimeout);
+    userTypingTimeout = null;
+  }
 
   renderMessages();
-  
-  //typing indicator
-    setTimeout(() => {
-      simulateTyping();
-    }, 500 + Math.random() * 1500);
 }
 
 // ===== Contacts & chọn người nhận =====
@@ -591,22 +609,15 @@ function selectRecipient(user) {
 
 // ===== Keyboard shortcuts for testing =====
 document.addEventListener('keydown', (e) => {
-  // Ctrl + T để toggle typing indicator
+  // Ctrl + T để toggle typing indicator (chỉ để test)
   if (e.ctrlKey && e.key === 't') {
     e.preventDefault();
     if (typingIndicatorElement) {
       hideTypingIndicator();
     } else {
-      simulateTyping();
+      showTypingIndicator();
     }
   }
 });
 
-// ===== Auto typing simulation =====
-// Tự động simulate typing ngẫu nhiên mỗi 20-40 giây
-setInterval(() => {
-  if (!activeThread || isComposingNew) return;
-  
-  // typing indicator
-    simulateTyping();
-}, 30000); // Check mỗi 30 giây
+// Xóa auto typing simulation interval (không cần nữa)
