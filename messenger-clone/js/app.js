@@ -22,7 +22,7 @@ const threads = [
     avatar: "assets/images/contact-2.png",
     messages: [
       { side: "left", text: "Đêm r nào t hơi kém", timestamp: new Date(Date.now() - 7200000) },
-      { side: "left", text: "Dùng từ nào để hiểu hơn đi Tùng", timestamp: new Date(Date.now() - 7140000) },
+      { side: "left", text: "Dùng từ nào để hiểu hơn đi", timestamp: new Date(Date.now() - 7140000) },
       { side: "right", text: "))))", timestamp: new Date(Date.now() - 720000) },
       { side: "left", text: "T có thể giữ sự tò mò này đến lúc têo", timestamp: new Date(Date.now() - 120000) },
       { side: "right", text: "Quy cứ", timestamp: new Date(Date.now() - 60000) },
@@ -69,6 +69,9 @@ const emojiBtn = document.getElementById('emojiBtn');
 const emojiPanel = document.getElementById('emojiPanel');
 const backBtn = document.getElementById('backBtn');
 const newMsgBtn = document.getElementById('newMsgBtn');
+
+// Typing indicator element
+let typingIndicatorElement = null;
 
 // Thanh "Đến:" & composer
 const toBar = document.getElementById("toBar");
@@ -231,6 +234,83 @@ function appendMessage(text, side='right', push=true, timestamp=null, showTimest
   }
 }
 
+// ===== Typing Indicator =====
+function createTypingIndicator() {
+  const indicator = document.createElement('div');
+  indicator.className = 'typing-indicator';
+  indicator.id = 'typingIndicator';
+  indicator.innerHTML = `
+    <div class="typing-dot"></div>
+    <div class="typing-dot"></div>
+    <div class="typing-dot"></div>
+  `;
+  return indicator;
+}
+
+function showTypingIndicator() {
+  // Xóa typing indicator cũ nếu có
+  hideTypingIndicator();
+  
+  // Tạo và thêm typing indicator mới
+  typingIndicatorElement = createTypingIndicator();
+  scroller.appendChild(typingIndicatorElement);
+  
+  // Scroll xuống cuối
+  scroller.scrollTop = scroller.scrollHeight;
+  
+  // Cập nhật status
+  if (activeThread && peerStatus) {
+    peerStatus.textContent = "Đang nhập...";
+  }
+}
+
+function hideTypingIndicator() {
+  if (typingIndicatorElement && typingIndicatorElement.parentNode) {
+    typingIndicatorElement.remove();
+    typingIndicatorElement = null;
+  }
+  
+  // Khôi phục status
+  if (activeThread && peerStatus) {
+    peerStatus.textContent = activeThread.time ? ("Hoạt động " + activeThread.time + " trước") : "Đang hoạt động";
+  }
+}
+
+// Simulate typing from other person (for demo)
+function simulateTyping() {
+  if (!activeThread) return;
+  
+  showTypingIndicator();
+  
+  // Sau 2-4 giây, gửi tin nhắn và ẩn typing indicator
+  const delay = 2000 + Math.random() * 2000;
+  setTimeout(() => {
+    hideTypingIndicator();
+    
+    // Thêm tin nhắn từ đối phương
+    const responses = [
+      "Oke bạn ơi",
+      "Mình hiểu rồi",
+      "Được đó",
+      "Ok nha",
+      "Cảm ơn bạn",
+      "Uhm"
+    ];
+    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+    
+    const now = new Date();
+    const lastMsg = activeThread?.messages?.[activeThread.messages.length - 1];
+    const showTimestamp = shouldShowTimestamp(lastMsg?.timestamp, now);
+    
+    appendMessage(randomResponse, 'left', true, now, showTimestamp);
+    
+    // Cập nhật snippet
+    activeThread.snippet = randomResponse;
+    activeThread.time = "vừa xong";
+    renderThreads(threads);
+  }, delay);
+}
+
 // ===== Tạo/ cập nhật thread nháp khi chọn người nhận =====
 function ensureDraftThread(){
   if (!isComposingNew || selectedRecipients.length === 0) return null;
@@ -305,7 +385,7 @@ function sendMessage(){
   msgInput.value = '';
   scroller.scrollTop = scroller.scrollHeight;
 
-  // Sau khi gửi tin đầu tiên, “đóng” chế độ tạo mới
+  // Sau khi gửi tin đầu tiên, "đóng" chế độ tạo mới
   if (isComposingNew){
     isComposingNew = false;
     toBar.style.display = "none";
@@ -314,6 +394,11 @@ function sendMessage(){
     [...toInput.querySelectorAll(".tag")].forEach(t => t.remove());
     draftThreadId = null; // thread nháp đã trở thành thread thật
   }
+  
+  // Simulate typing response (có thể bật/tắt tùy ý)
+    setTimeout(() => {
+      simulateTyping();
+    }, 1000 + Math.random() * 2000);
 }
 sendBtn?.addEventListener('click', sendMessage);
 msgInput?.addEventListener('keydown', e => {
@@ -431,7 +516,15 @@ function setActiveThread(id) {
   [...toInput.querySelectorAll(".tag")].forEach(t => t.remove());
   composer.style.display = "flex";
 
+  // Ẩn typing indicator khi chuyển thread
+  hideTypingIndicator();
+
   renderMessages();
+  
+  //typing indicator
+    setTimeout(() => {
+      simulateTyping();
+    }, 500 + Math.random() * 1500);
 }
 
 // ===== Contacts & chọn người nhận =====
@@ -495,3 +588,25 @@ function selectRecipient(user) {
   // 👉 tạo/ cập nhật thread nháp & hiện composer
   ensureDraftThread();
 }
+
+// ===== Keyboard shortcuts for testing =====
+document.addEventListener('keydown', (e) => {
+  // Ctrl + T để toggle typing indicator
+  if (e.ctrlKey && e.key === 't') {
+    e.preventDefault();
+    if (typingIndicatorElement) {
+      hideTypingIndicator();
+    } else {
+      simulateTyping();
+    }
+  }
+});
+
+// ===== Auto typing simulation =====
+// Tự động simulate typing ngẫu nhiên mỗi 20-40 giây
+setInterval(() => {
+  if (!activeThread || isComposingNew) return;
+  
+  // typing indicator
+    simulateTyping();
+}, 30000); // Check mỗi 30 giây
