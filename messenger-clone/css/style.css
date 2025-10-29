@@ -312,10 +312,74 @@ body{
 }
 
 /* Messages */
-.msg{max-width:68ch; padding:10px 12px; margin:6px 0; border-radius:18px; word-wrap:break-word; overflow-wrap:anywhere; box-shadow:0 1px 0 rgba(0,0,0,.05)}
-.msg.left{background:#f0f2f5; color:#050505; align-self:flex-start; border-top-left-radius:4px}
-.msg.right{color:#fff; align-self:flex-end; border-top-right-radius:4px; background: linear-gradient(135deg, var(--purple1), var(--purple2));}
-.bubble-group{display:flex; flex-direction:column}
+.msg{
+  max-width:68ch; 
+  padding:10px 12px; 
+  margin:2px 0; 
+  border-radius:18px; 
+  word-wrap:break-word; 
+  overflow-wrap:anywhere; 
+  box-shadow:0 1px 0 rgba(0,0,0,.05);
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.msg.left{
+  background:#f0f2f5; 
+  color:#050505; 
+  align-self:flex-start; 
+  border-top-left-radius:4px;
+}
+.msg.right{
+  color:#fff; 
+  align-self:flex-end; 
+  border-top-right-radius:4px; 
+  background: linear-gradient(135deg, var(--purple1), var(--purple2));
+}
+.bubble-group{
+  display:flex; 
+  flex-direction:column;
+  margin-bottom: 2px;
+}
+
+/* Tooltip thời gian khi hover */
+.message-time-tooltip {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 10;
+}
+
+.msg.left .message-time-tooltip {
+  left: calc(100% + 8px);
+}
+
+.msg.right .message-time-tooltip {
+  right: calc(100% + 8px);
+}
+
+.msg:hover .message-time-tooltip {
+  opacity: 1;
+}
+
+/* Timestamp divider giữa các nhóm tin nhắn */
+.message-timestamp-divider {
+  text-align: center;
+  color: var(--sub);
+  font-size: 12px;
+  margin: 12px 0 8px;
+  font-weight: 500;
+}
+
 .time{color:var(--sub); font-size:12px; margin-top:2px}
 
 /* Composer */

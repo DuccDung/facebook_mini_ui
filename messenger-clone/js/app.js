@@ -14,11 +14,41 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ===== Demo data & state =====
 const threads = [
-  { id: 1, name: "Hue Do", snippet: "Hue đã gửi một file đính kèm.", time: "3 giờ", avatar: "assets/images/contact-2.png" },
-  { id: 2, name: "Lê Ngọc", snippet: "Bạn: hh • 2 ngày", time: "", avatar: "assets/images/contact-1.png", active: true, messages: [
-    { side: "right", text: "h" },{ side: "right", text: "h" },{ side: "right", text: "h" },
-    { side: "right", text: "h" },{ side: "right", text: "hh" },
-  ]},
+  { 
+    id: 1, 
+    name: "Nguyễn Nguyệt Hà", 
+    snippet: "Hue đã gửi một file đính kèm.", 
+    time: "3 giờ", 
+    avatar: "assets/images/contact-2.png",
+    messages: [
+      { side: "left", text: "Đêm r nào t hơi kém", timestamp: new Date(Date.now() - 7200000) },
+      { side: "left", text: "Dùng từ nào để hiểu hơn đi Tùng", timestamp: new Date(Date.now() - 7140000) },
+      { side: "right", text: "))))", timestamp: new Date(Date.now() - 720000) },
+      { side: "left", text: "T có thể giữ sự tò mò này đến lúc têo", timestamp: new Date(Date.now() - 120000) },
+      { side: "right", text: "Quy cứ", timestamp: new Date(Date.now() - 60000) },
+      { side: "right", text: "Đúng rồi", timestamp: new Date(Date.now() - 55000) },
+      { side: "right", text: "Là nó đấy", timestamp: new Date(Date.now() - 50000) },
+      { side: "right", text: "))))", timestamp: new Date(Date.now() - 10000) },
+      { side: "left", text: "Mà giải thích đi mà", timestamp: new Date(Date.now() - 5000) },
+      { side: "left", text: "Quy cứ là nnao", timestamp: new Date(Date.now() - 4000) },
+      { side: "left", text: "Tức là rũ lời ấy hả", timestamp: new Date(Date.now() - 3000) },
+    ]
+  },
+  { 
+    id: 2, 
+    name: "Lê Ngọc", 
+    snippet: "Bạn: hh • 2 ngày", 
+    time: "", 
+    avatar: "assets/images/contact-1.png", 
+    active: true, 
+    messages: [
+      { side: "right", text: "h", timestamp: new Date(Date.now() - 3600000) },
+      { side: "right", text: "h", timestamp: new Date(Date.now() - 3540000) },
+      { side: "right", text: "h", timestamp: new Date(Date.now() - 3480000) },
+      { side: "right", text: "h", timestamp: new Date(Date.now() - 3420000) },
+      { side: "right", text: "hh", timestamp: new Date(Date.now() - 3360000) },
+    ]
+  },
   { id: 3, name: "CLC CNTT V-A 1", snippet: "Cờ Tỷ Phú Zagoo: Kiên vừa chơi...", time: "3 ngày", avatar: "assets/images/contact-3.png" },
   { id: 4, name: "Lê Văn Hưng", snippet: "Bạn: Dạ vâng ạ • 6 ngày", time: "", avatar: "assets/images/contact-4.png" },
   { id: 5, name: "Phạm Thị Lượng", snippet: "Con ăn gì để đi mua con • 1 tuần", time: "", avatar: "assets/images/contact-5.png" },
@@ -127,23 +157,77 @@ function renderThreads(list){
 
 
 // ===== Messages UI =====
+function formatTime(date) {
+  const now = new Date();
+  const diff = now - date;
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+
+  if (minutes < 1) return "Vừa xong";
+  if (minutes < 60) return `${minutes} phút`;
+  if (hours < 24) return `${hours} giờ`;
+  return `${days} ngày`;
+}
+
+function shouldShowTimestamp(prevTimestamp, currentTimestamp) {
+  if (!prevTimestamp) return false;
+  const diff = Math.abs(currentTimestamp - prevTimestamp);
+  // Hiển thị timestamp nếu cách nhau hơn 5 phút (300000ms)
+  return diff > 300000;
+}
+
 function renderMessages(){
   scroller.innerHTML = '';
-  (activeThread?.messages || []).forEach(m => appendMessage(m.text, m.side, false));
+  const messages = activeThread?.messages || [];
+  
+  messages.forEach((m, index) => {
+    const prevMsg = index > 0 ? messages[index - 1] : null;
+    const showTimestamp = shouldShowTimestamp(
+      prevMsg?.timestamp, 
+      m.timestamp
+    );
+    
+    appendMessage(m.text, m.side, false, m.timestamp, showTimestamp);
+  });
+  
   scroller.scrollTop = scroller.scrollHeight;
 }
 
-function appendMessage(text, side='right', push=true){
+function appendMessage(text, side='right', push=true, timestamp=null, showTimestamp=false){
+  // Nếu cần hiển thị timestamp ở giữa
+  if (showTimestamp && timestamp) {
+    const timeDiv = document.createElement('div');
+    timeDiv.className = 'message-timestamp-divider';
+    timeDiv.textContent = formatTime(timestamp);
+    scroller.appendChild(timeDiv);
+  }
+
   const wrap = document.createElement('div');
   wrap.className = 'bubble-group';
+  
   const msg = document.createElement('div');
   msg.className = 'msg ' + (side === 'left' ? 'left' : 'right');
   msg.textContent = text;
+  
+  // Thêm tooltip thời gian khi hover
+  if (timestamp) {
+    const tooltip = document.createElement('div');
+    tooltip.className = 'message-time-tooltip';
+    tooltip.textContent = formatTime(timestamp);
+    msg.appendChild(tooltip);
+  }
+  
   wrap.appendChild(msg);
   scroller.appendChild(wrap);
+  
   if (push){
     activeThread.messages = activeThread.messages || [];
-    activeThread.messages.push({ side, text });
+    activeThread.messages.push({ 
+      side, 
+      text, 
+      timestamp: timestamp || new Date() 
+    });
   }
 }
 
@@ -201,7 +285,12 @@ function sendMessage(){
     ensureDraftThread();
   }
 
-  appendMessage(text,'right',true);
+  // Kiểm tra tin nhắn cuối để quyết định có hiển thị timestamp không
+  const lastMsg = activeThread?.messages?.[activeThread.messages.length - 1];
+  const now = new Date();
+  const showTimestamp = shouldShowTimestamp(lastMsg?.timestamp, now);
+
+  appendMessage(text, 'right', true, now, showTimestamp);
 
   // Cập nhật snippet/time + đẩy lên đầu
   activeThread.snippet = "Bạn: " + text;
