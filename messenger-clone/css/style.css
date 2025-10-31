@@ -312,10 +312,130 @@ body{
 }
 
 /* Messages */
-.msg{max-width:68ch; padding:10px 12px; margin:6px 0; border-radius:18px; word-wrap:break-word; overflow-wrap:anywhere; box-shadow:0 1px 0 rgba(0,0,0,.05)}
-.msg.left{background:#f0f2f5; color:#050505; align-self:flex-start; border-top-left-radius:4px}
-.msg.right{color:#fff; align-self:flex-end; border-top-right-radius:4px; background: linear-gradient(135deg, var(--purple1), var(--purple2));}
-.bubble-group{display:flex; flex-direction:column}
+.msg{
+  max-width:68ch; 
+  padding:10px 12px; 
+  margin:2px 0; 
+  border-radius:18px; 
+  word-wrap:break-word; 
+  overflow-wrap:anywhere; 
+  box-shadow:0 1px 0 rgba(0,0,0,.05);
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.msg.left{
+  background:#f0f2f5; 
+  color:#050505; 
+  align-self:flex-start; 
+  border-top-left-radius:4px;
+}
+.msg.right{
+  color:#fff; 
+  align-self:flex-end; 
+  border-top-right-radius:4px; 
+  background: linear-gradient(135deg, var(--purple1), var(--purple2));
+}
+.bubble-group{
+  display:flex; 
+  flex-direction:column;
+  margin-bottom: 2px;
+}
+
+/* Spacing variants */
+.bubble-group.spacing-tight {
+  margin-bottom: 1px; /* Sát nhau hơn cho tin nhắn < 1 phút */
+}
+
+.bubble-group.spacing-spaced {
+  margin-bottom: 12px; /* Khoảng cách xa hơn cho tin nhắn 1-15 phút */
+}
+
+/* Tooltip thời gian khi hover */
+.message-time-tooltip {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 10;
+}
+
+.msg.left .message-time-tooltip {
+  left: calc(100% + 8px);
+}
+
+.msg.right .message-time-tooltip {
+  right: calc(100% + 8px);
+}
+
+.msg:hover .message-time-tooltip {
+  opacity: 1;
+}
+
+/* Timestamp divider giữa các nhóm tin nhắn */
+.message-timestamp-divider {
+  text-align: center;
+  color: var(--sub);
+  font-size: 12px;
+  margin: 12px 0 8px;
+  font-weight: 500;
+}
+
+/* Typing Indicator */
+.typing-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #f0f2f5;
+  padding: 12px 16px;
+  border-radius: 18px;
+  border-bottom-left-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.typing-indicator.hidden {
+  display: none;
+}
+
+.typing-dot {
+  width: 8px;
+  height: 8px;
+  background: #9ca3af;
+  border-radius: 50%;
+  animation: typing 1.4s infinite;
+}
+
+.typing-dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.7;
+  }
+  30% {
+    transform: translateY(-10px);
+    opacity: 1;
+  }
+}
+
 .time{color:var(--sub); font-size:12px; margin-top:2px}
 
 /* Composer */

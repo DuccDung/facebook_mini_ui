@@ -14,11 +14,41 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ===== Demo data & state =====
 const threads = [
-  { id: 1, name: "Hue Do", snippet: "Hue đã gửi một file đính kèm.", time: "3 giờ", avatar: "assets/images/contact-2.png" },
-  { id: 2, name: "Lê Ngọc", snippet: "Bạn: hh • 2 ngày", time: "", avatar: "assets/images/contact-1.png", active: true, messages: [
-    { side: "right", text: "h" },{ side: "right", text: "h" },{ side: "right", text: "h" },
-    { side: "right", text: "h" },{ side: "right", text: "hh" },
-  ]},
+  { 
+    id: 1, 
+    name: "Nguyễn Nguyệt Hà", 
+    snippet: "Hue đã gửi một file đính kèm.", 
+    time: "3 giờ", 
+    avatar: "assets/images/contact-2.png",
+    messages: [
+      { side: "left", text: "Đêm r nào t hơi kém", timestamp: new Date(Date.now() - 7200000) },
+      { side: "left", text: "Dùng từ nào để hiểu hơn đi", timestamp: new Date(Date.now() - 7140000) },
+      { side: "right", text: "))))", timestamp: new Date(Date.now() - 720000) },
+      { side: "left", text: "T có thể giữ sự tò mò này đến lúc têo", timestamp: new Date(Date.now() - 120000) },
+      { side: "right", text: "Quy cứ", timestamp: new Date(Date.now() - 60000) },
+      { side: "right", text: "Đúng rồi", timestamp: new Date(Date.now() - 55000) },
+      { side: "right", text: "Là nó đấy", timestamp: new Date(Date.now() - 50000) },
+      { side: "right", text: "))))", timestamp: new Date(Date.now() - 10000) },
+      { side: "left", text: "Mà giải thích đi mà", timestamp: new Date(Date.now() - 5000) },
+      { side: "left", text: "Quy cứ là nnao", timestamp: new Date(Date.now() - 4000) },
+      { side: "left", text: "Tức là rũ lời ấy hả", timestamp: new Date(Date.now() - 3000) },
+    ]
+  },
+  { 
+    id: 2, 
+    name: "Lê Ngọc", 
+    snippet: "Bạn: hh • 2 ngày", 
+    time: "", 
+    avatar: "assets/images/contact-1.png", 
+    active: true, 
+    messages: [
+      { side: "right", text: "h", timestamp: new Date(Date.now() - 3600000) },
+      { side: "right", text: "h", timestamp: new Date(Date.now() - 3540000) },
+      { side: "right", text: "h", timestamp: new Date(Date.now() - 3480000) },
+      { side: "right", text: "h", timestamp: new Date(Date.now() - 3420000) },
+      { side: "right", text: "hh", timestamp: new Date(Date.now() - 3360000) },
+    ]
+  },
   { id: 3, name: "CLC CNTT V-A 1", snippet: "Cờ Tỷ Phú Zagoo: Kiên vừa chơi...", time: "3 ngày", avatar: "assets/images/contact-3.png" },
   { id: 4, name: "Lê Văn Hưng", snippet: "Bạn: Dạ vâng ạ • 6 ngày", time: "", avatar: "assets/images/contact-4.png" },
   { id: 5, name: "Phạm Thị Lượng", snippet: "Con ăn gì để đi mua con • 1 tuần", time: "", avatar: "assets/images/contact-5.png" },
@@ -39,6 +69,10 @@ const emojiBtn = document.getElementById('emojiBtn');
 const emojiPanel = document.getElementById('emojiPanel');
 const backBtn = document.getElementById('backBtn');
 const newMsgBtn = document.getElementById('newMsgBtn');
+
+// Typing indicator element
+let typingIndicatorElement = null;
+let userTypingTimeout = null; // Timeout để track user typing
 
 // Thanh "Đến:" & composer
 const toBar = document.getElementById("toBar");
@@ -127,24 +161,209 @@ function renderThreads(list){
 
 
 // ===== Messages UI =====
+function formatTime(date) {
+  const now = new Date();
+  const diff = now - date;
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+
+  // Nếu tin nhắn trong vòng 1 giờ: hiển thị tương đối
+  if (minutes < 1) return "Vừa xong";
+  if (minutes < 60) return `${minutes} phút`;
+  
+  // Nếu tin nhắn trong ngày hôm nay (< 24 giờ): hiển thị giờ cụ thể
+  if (hours < 24) {
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+    return `${hour}:${minute.toString().padStart(2, '0')}`;
+  }
+  
+  // Nếu tin nhắn > 1 ngày: hiển thị ngày tháng + giờ
+  if (days < 7) {
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+    return `${days} ngày trước, ${hour}:${minute.toString().padStart(2, '0')}`;
+  }
+  
+  // Nếu > 1 tuần: hiển thị ngày/tháng
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  return `${day}/${month}`;
+}
+
+function shouldShowTimestamp(prevTimestamp, currentTimestamp) {
+  if (!prevTimestamp) return false;
+  const diff = Math.abs(currentTimestamp - prevTimestamp);
+  // Hiển thị timestamp divider nếu cách nhau hơn 15 phút (900000ms)
+  return diff > 900000; // 15 phút
+}
+
+function getMessageSpacing(prevTimestamp, currentTimestamp) {
+  if (!prevTimestamp) return 'normal';
+  const diff = Math.abs(currentTimestamp - prevTimestamp);
+  
+  // < 1 phút: sát nhau
+  if (diff < 60000) return 'tight';
+  
+  // > 1 phút và < 15 phút: khoảng cách xa hơn
+  if (diff < 900000) return 'spaced';
+  
+  // > 15 phút: có timestamp divider
+  return 'normal';
+}
+
 function renderMessages(){
   scroller.innerHTML = '';
-  (activeThread?.messages || []).forEach(m => appendMessage(m.text, m.side, false));
+  const messages = activeThread?.messages || [];
+  
+  messages.forEach((m, index) => {
+    const prevMsg = index > 0 ? messages[index - 1] : null;
+    const showTimestamp = shouldShowTimestamp(
+      prevMsg?.timestamp, 
+      m.timestamp
+    );
+    const spacing = getMessageSpacing(
+      prevMsg?.timestamp,
+      m.timestamp
+    );
+    
+    appendMessage(m.text, m.side, false, m.timestamp, showTimestamp, spacing);
+  });
+  
   scroller.scrollTop = scroller.scrollHeight;
 }
 
-function appendMessage(text, side='right', push=true){
+function appendMessage(text, side='right', push=true, timestamp=null, showTimestamp=false, spacing='normal'){
+  // Nếu cần hiển thị timestamp ở giữa
+  if (showTimestamp && timestamp) {
+    const timeDiv = document.createElement('div');
+    timeDiv.className = 'message-timestamp-divider';
+    timeDiv.textContent = formatTime(timestamp);
+    scroller.appendChild(timeDiv);
+  }
+
   const wrap = document.createElement('div');
   wrap.className = 'bubble-group';
+  
+  // Thêm class spacing
+  if (spacing === 'tight') {
+    wrap.classList.add('spacing-tight');
+  } else if (spacing === 'spaced') {
+    wrap.classList.add('spacing-spaced');
+  }
+  
   const msg = document.createElement('div');
   msg.className = 'msg ' + (side === 'left' ? 'left' : 'right');
   msg.textContent = text;
+  
+  // Thêm tooltip thời gian khi hover
+  if (timestamp) {
+    const tooltip = document.createElement('div');
+    tooltip.className = 'message-time-tooltip';
+    tooltip.textContent = formatTime(timestamp);
+    msg.appendChild(tooltip);
+  }
+  
   wrap.appendChild(msg);
   scroller.appendChild(wrap);
+  
   if (push){
     activeThread.messages = activeThread.messages || [];
-    activeThread.messages.push({ side, text });
+    activeThread.messages.push({ 
+      side, 
+      text, 
+      timestamp: timestamp || new Date() 
+    });
   }
+}
+
+// ===== Typing Indicator =====
+function createTypingIndicator() {
+  const indicator = document.createElement('div');
+  indicator.className = 'typing-indicator';
+  indicator.id = 'typingIndicator';
+  indicator.innerHTML = `
+    <div class="typing-dot"></div>
+    <div class="typing-dot"></div>
+    <div class="typing-dot"></div>
+  `;
+  return indicator;
+}
+
+function showTypingIndicator() {
+  // Xóa typing indicator cũ nếu có
+  hideTypingIndicator();
+  
+  // Tạo và thêm typing indicator mới
+  typingIndicatorElement = createTypingIndicator();
+  scroller.appendChild(typingIndicatorElement);
+  
+  // Scroll xuống cuối
+  scroller.scrollTop = scroller.scrollHeight;
+  
+  // Cập nhật status
+  if (activeThread && peerStatus) {
+    peerStatus.textContent = "Đang nhập...";
+  }
+}
+
+function hideTypingIndicator() {
+  if (typingIndicatorElement && typingIndicatorElement.parentNode) {
+    typingIndicatorElement.remove();
+    typingIndicatorElement = null;
+  }
+  
+  // Khôi phục status
+  if (activeThread && peerStatus) {
+    peerStatus.textContent = activeThread.time ? ("Hoạt động " + activeThread.time + " trước") : "Đang hoạt động";
+  }
+}
+
+// Simulate typing from other person - response sau khi user gửi tin
+function simulateTyping() {
+  if (!activeThread) return;
+  
+  showTypingIndicator();
+  
+  // Chọn tin nhắn sẽ gửi
+  const responses = [
+    "Ok",
+    "Oke bạn ơi",
+    "Mình hiểu rồi",
+    "Được đó",
+    "Ok nha",
+    "Cảm ơn bạn nhé",
+    "Uhm, mình đang bận một chút, chờ mình tí nha",
+    "À được rồi, để mình xem xét và trả lời bạn sau nhé",
+    "Cảm ơn bạn đã chia sẻ thông tin này, mình sẽ xem xét kỹ và phản hồi lại bạn sớm nhất có thể"
+  ];
+  const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+  
+  // Tính thời gian typing dựa trên độ dài tin nhắn
+  const baseDelay = 500; // Delay cơ bản (thời gian suy nghĩ)
+  const typingSpeed = 100; // ms per character (tốc độ gõ)
+  const messageLength = randomResponse.length;
+  const typingTime = baseDelay + (messageLength * typingSpeed);
+  
+  // Giới hạn tối đa 5 giây, tối thiểu 1 giây
+  const delay = Math.min(Math.max(typingTime, 1000), 5000);
+  
+  setTimeout(() => {
+    hideTypingIndicator();
+    
+    const now = new Date();
+    const lastMsg = activeThread?.messages?.[activeThread.messages.length - 1];
+    const showTimestamp = shouldShowTimestamp(lastMsg?.timestamp, now);
+    const spacing = getMessageSpacing(lastMsg?.timestamp, now);
+    
+    appendMessage(randomResponse, 'left', true, now, showTimestamp, spacing);
+    
+    // Cập nhật snippet
+    activeThread.snippet = randomResponse;
+    activeThread.time = "vừa xong";
+    renderThreads(threads);
+  }, delay);
 }
 
 // ===== Tạo/ cập nhật thread nháp khi chọn người nhận =====
@@ -196,12 +415,24 @@ function sendMessage(){
   const text = msgInput.value.trim();
   if (!text) return;
 
+  // Clear timeout nếu đang có
+  if (userTypingTimeout) {
+    clearTimeout(userTypingTimeout);
+    userTypingTimeout = null;
+  }
+
   // Nếu đang tạo mới, đảm bảo có thread nháp sẵn để nhận tin
   if (isComposingNew && selectedRecipients.length > 0){
     ensureDraftThread();
   }
 
-  appendMessage(text,'right',true);
+  // Kiểm tra tin nhắn cuối để quyết định có hiển thị timestamp không
+  const lastMsg = activeThread?.messages?.[activeThread.messages.length - 1];
+  const now = new Date();
+  const showTimestamp = shouldShowTimestamp(lastMsg?.timestamp, now);
+  const spacing = getMessageSpacing(lastMsg?.timestamp, now);
+
+  appendMessage(text, 'right', true, now, showTimestamp, spacing);
 
   // Cập nhật snippet/time + đẩy lên đầu
   activeThread.snippet = "Bạn: " + text;
@@ -216,7 +447,7 @@ function sendMessage(){
   msgInput.value = '';
   scroller.scrollTop = scroller.scrollHeight;
 
-  // Sau khi gửi tin đầu tiên, “đóng” chế độ tạo mới
+  // Sau khi gửi tin đầu tiên, "đóng" chế độ tạo mới
   if (isComposingNew){
     isComposingNew = false;
     toBar.style.display = "none";
@@ -225,6 +456,11 @@ function sendMessage(){
     [...toInput.querySelectorAll(".tag")].forEach(t => t.remove());
     draftThreadId = null; // thread nháp đã trở thành thread thật
   }
+  
+  // Simulate đối phương typing và response ngay sau khi gửi
+  setTimeout(() => {
+    simulateTyping();
+  }, 500 + Math.random() * 1000); // Delay ngẫu nhiên 0.5-1.5s
 }
 sendBtn?.addEventListener('click', sendMessage);
 msgInput?.addEventListener('keydown', e => {
@@ -342,6 +578,15 @@ function setActiveThread(id) {
   [...toInput.querySelectorAll(".tag")].forEach(t => t.remove());
   composer.style.display = "flex";
 
+  // Ẩn typing indicator khi chuyển thread
+  hideTypingIndicator();
+  
+  // Clear timeout
+  if (userTypingTimeout) {
+    clearTimeout(userTypingTimeout);
+    userTypingTimeout = null;
+  }
+
   renderMessages();
 }
 
@@ -406,3 +651,18 @@ function selectRecipient(user) {
   // 👉 tạo/ cập nhật thread nháp & hiện composer
   ensureDraftThread();
 }
+
+// ===== Keyboard shortcuts for testing =====
+document.addEventListener('keydown', (e) => {
+  // Ctrl + T để toggle typing indicator (chỉ để test)
+  if (e.ctrlKey && e.key === 't') {
+    e.preventDefault();
+    if (typingIndicatorElement) {
+      hideTypingIndicator();
+    } else {
+      showTypingIndicator();
+    }
+  }
+});
+
+// Xóa auto typing simulation interval (không cần nữa)
