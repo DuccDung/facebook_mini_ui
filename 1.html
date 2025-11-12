@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Clone - Lê Ngọc</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="1.css">
+
+</head>
+<body>
+
+    <header class="topbar">
+        <!-- Left: Logo + Search -->
+        <div class="top-left">
+            <a class="brand" href="home.html">
+                <img src="messenger-clone/assets/icons/facebook.svg" alt="Facebook">
+            </a>
+            <div class="searchbar">
+                <img src="messenger-clone/assets/icons/search.svg" alt="">
+                <input type="text" placeholder="Tìm kiếm trên Facebook">
+            </div>
+        </div>
+
+        <!-- Center: Main Navigation -->
+        <nav class="top-center">
+            <button class="nav-btn active" title="Trang chủ">
+                <img src="messenger-clone/assets/icons/house-door.svg" alt="">
+            </button>
+            <button class="nav-btn" title="Bạn bè">
+                <img src="messenger-clone/assets/icons/people-fill.svg" alt="">
+            </button>
+            <button class="nav-btn" title="Video">
+                <img src="messenger-clone/assets/icons/play-btn.svg" alt="">
+            </button>
+            <button class="nav-btn" title="Marketplace">
+                <img src="messenger-clone/assets/icons/shop copy.svg" alt="">
+            </button>
+            <button class="nav-btn" title="Trò chơi">
+                <img src="messenger-clone/assets/icons/controller.svg" alt="">
+            </button>
+        </nav>
+
+        <!-- Right: Actions -->
+        <div class="top-right">
+            <button class="icon-btn" title="Menu">
+                <img src="messenger-clone/assets/icons/grid.svg" alt="">
+            </button>
+            <button class="icon-btn" title="Messenger">
+                <img src="messenger-clone/assets/icons/messenger2.png" alt="">
+            </button>
+            <button class="icon-btn" title="Thông báo">
+                <img src="messenger-clone/assets/icons/bell.svg" alt="">
+            </button>
+            <!-- menudrop profile -->
+            <div class="nav-icon" id="profileMenuTrigger" style="position: relative; overflow: visible;">
+                <div class="nav-user-icon" style="pointer-events: none;">
+                    <img src="https://scontent.fhan2-4.fna.fbcdn.net/v/t39.30808-1/369610259_6840478555986693_6725267236708779291_n.jpg?stp=cp0_dst-jpg_s40x40&_nc_cat=103&ccb=1-7&_nc_sid=e4545e&_nc_ohc=uy9ygXmG4FkQ7kNvgFGkX5w&_nc_zt=24&_nc_ht=scontent.fhan2-4.fna&_nc_gid=A3nJ2kCq-m0j-k8sX_k7cK-&oh=00_AYA6q9f-wO6x4k3O4D4-z4q0-a5g5j4h3l2k1j0h9g8f7d&oe=673B4E1F" alt="" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                </div>
+                    <div class="dropdown-menu" id="profileMenu">    
+                        <div id="main-menu-view" class="menu-view">
+                            <div class="menu-profile-section">
+                                <div class="menu-item-profile shadow-hover">
+                                    <div class="profile-avatar-large">
+                                        <img src="https://scontent.fhan2-4.fna.fbcdn.net/v/t39.30808-1/369610259_6840478555986693_6725267236708779291_n.jpg?stp=cp0_dst-jpg_s40x40&_nc_cat=103&ccb=1-7&_nc_sid=e4545e&_nc_ohc=uy9ygXmG4FkQ7kNvgFGkX5w&_nc_zt=24&_nc_ht=scontent.fhan2-4.fna&_nc_gid=A3nJ2kCq-m0j-k8sX_k7cK-&oh=00_AYA6q9f-wO6x4k3O4D4-z4q0-a5g5j4h3l2k1j0h9g8f7d&oe=673B4E1F" alt="" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                                    </div>
+                                    <span class="menu-profile-name">Lê Ngọc</span>
+                                </div>
+                                <div class="menu-divider" style="margin: 4px 0;"></div>
+                                <div class="menu-see-all shadow-hover" style="color: var(--accent-blue); padding: 8px;">
+                                    <span>Xem tất cả trang cá nhân</span>
+                                </div>
+                            </div>
+                            <div class="menu-item shadow-hover">
+                                <div class="menu-icon-circle"><i class="fab fa-meta"></i></div>
+                                <div class="menu-text">Meta Business Suite</div>
+                                <i class="fas fa-external-link-alt menu-arrow-icon" style="font-size: 14px;"></i>
+                            </div>
+                            <div class="menu-item shadow-hover" id="settingsPrivacyTrigger">
+                                <div class="menu-icon-circle"><i class="fas fa-cog"></i></div>
+                                <div class="menu-text">Cài đặt và quyền riêng tư</div>
+                                <i class="fas fa-chevron-right menu-arrow-icon"></i>
+                            </div>
+                            <div class="menu-item shadow-hover" id="helpSupportTrigger">
+                                <div class="menu-icon-circle"><i class="fas fa-question-circle"></i></div>
+                                <div class="menu-text">Trợ giúp và hỗ trợ</div>
+                                <i class="fas fa-chevron-right menu-arrow-icon"></i>
+                            </div>
+                            <div class="menu-item shadow-hover" id="displayAccessibilityTrigger">
+                                <div class="menu-icon-circle"><i class="fas fa-moon"></i></div>
+                                <div class="menu-text">Màn hình và trợ năng</div>
+                                <i class="fas fa-chevron-right menu-arrow-icon"></i>
+                            </div>
+                            <div class="menu-item shadow-hover">
+                                <div class="menu-icon-circle"><i class="fas fa-comment-alt"></i></div>
+                                <div class="menu-text">Đóng góp ý kiến</div>
+                            </div>
+                            <div class="menu-item shadow-hover">
+                                <div class="menu-icon-circle"><i class="fas fa-sign-out-alt"></i></div>
+                                <div class="menu-text">Đăng xuất</div>
+                            </div>
+                            <div class="menu-footer">
+                                Quyền riêng tư · Điều khoản · Quảng cáo · Lựa chọn quảng cáo · Cookie · Xem thêm · Meta © 2023
+                            </div>
+                        </div>
+                        <div id="display-menu-view" class="menu-view" style="display: none;">
+                            <div class="menu-header">
+                                <div class="menu-icon-circle back-btn" id="backToMainMenu">
+                                    <i class="fas fa-arrow-left"></i>
+                                </div>
+                                <h2>Màn hình và trợ năng</h2>
+                            </div>
+
+                            <div class="setting-group">
+                                <div class="setting-info">
+                                    <div class="menu-icon-circle"><i class="fas fa-moon"></i></div>
+                                    <div class="setting-text">
+                                        <div class="setting-title">Chế độ tối</div>
+                                        <div class="setting-desc">Điều chỉnh giao diện của Facebook để giảm độ chói và cho đôi mắt được nghỉ ngơi.</div>
+                                    </div>
+                                </div>
+                                <label class="radio-item shadow-hover">
+                                    <span>Tắt</span>
+                                    <input type="radio" name="darkmode" value="off" checked>
+                                </label>
+                                <label class="radio-item shadow-hover">
+                                    <span>Bật</span>
+                                    <input type="radio" name="darkmode" value="on">
+                                </label>
+                                <label class="radio-item shadow-hover">
+                                    <span>Tự động</span>
+                                    <input type="radio" name="darkmode" value="auto">
+                                </label>
+                            </div>
+
+                            <div class="setting-group">
+                                <div class="setting-info">
+                                    <div class="menu-icon-circle"><i class="fas fa-compact-disc"></i></div> <div class="setting-text">
+                                        <div class="setting-title">Chế độ Thu gọn</div>
+                                        <div class="setting-desc">Giảm kích thước phông chữ để có thêm nội dung vừa với màn hình.</div>
+                                    </div>
+                                </div>
+                                <label class="radio-item shadow-hover">
+                                    <span>Tắt</span>
+                                    <input type="radio" name="compactmode" checked>
+                                </label>
+                                <label class="radio-item shadow-hover">
+                                    <span>Bật</span>
+                                    <input type="radio" name="compactmode">
+                                </label>
+                            </div>
+
+                            <div class="menu-item shadow-hover">
+                                <div class="menu-icon-circle"><i class="fas fa-keyboard"></i></div>
+                                <div class="menu-text">Bàn phím</div>
+                                <i class="fas fa-chevron-right menu-arrow-icon"></i>
+                            </div>
+                        </div>
+                        <div id="settings-menu-view" class="menu-view" style="display: none;">
+                            <div class="menu-header">
+                                <div class="menu-icon-circle back-btn" id="back-to-main-from-settings">
+                                    <i class="fas fa-arrow-left"></i>
+                                </div>
+                                <h2>Cài đặt và quyền riêng tư</h2>
+                            </div>
+                            <div class="menu-item shadow-hover">
+                                <div class="menu-icon-circle"><i class="fas fa-cog"></i></div>
+                                <div class="menu-text">Cài đặt</div>
+                            </div>
+                            <div class="menu-item shadow-hover" id="languageMenuTrigger">
+                                <div class="menu-icon-circle"><i class="fas fa-globe"></i></div>
+                                <div class="menu-text">Ngôn ngữ</div>
+                                <i class="fas fa-chevron-right menu-arrow-icon"></i>
+                            </div>
+                            <div class="menu-item shadow-hover">
+                                <div class="menu-icon-circle"><i class="fas fa-lock"></i></div>
+                                <div class="menu-text">Kiểm tra quyền riêng tư</div>
+                            </div>
+                            <div class="menu-item shadow-hover">
+                                <div class="menu-icon-circle"><i class="fas fa-shield-alt"></i></div>
+                                <div class="menu-text">Trung tâm quyền riêng tư</div>
+                            </div>
+                            <div class="menu-item shadow-hover">
+                                <div class="menu-icon-circle"><i class="fas fa-list-alt"></i></div>
+                                <div class="menu-text">Nhật ký hoạt động</div>
+                            </div>
+                            <div class="menu-item shadow-hover">
+                                <div class="menu-icon-circle"><i class="fas fa-sliders-h"></i></div>
+                                <div class="menu-text">Tùy chọn nội dung</div>
+                            </div>
+                        </div>
+                        <div id="help-support-menu-view" class="menu-view" style="display: none;">
+                            <div class="menu-header">
+                                <div class="menu-icon-circle back-btn" id="back-to-main-from-help">
+                                    <i class="fas fa-arrow-left"></i>
+                                </div>
+                                <h2>Trợ giúp và hỗ trợ</h2>
+                            </div>
+                            <div class="menu-item shadow-hover">
+                                <div class="menu-icon-circle"><i class="fas fa-question-circle"></i></div>
+                                <div class="menu-text">Trung tâm trợ giúp</div>
+                            </div>
+                            <div class="menu-item shadow-hover">
+                                <div class="menu-icon-circle"><i class="fas fa-user-check"></i></div>
+                                <div class="menu-text">Trạng thái tài khoản</div>
+                            </div>
+                            <div class="menu-item shadow-hover">
+                                <div class="menu-icon-circle"><i class="fas fa-envelope"></i></div>
+                                <div class="menu-text">Hộp thư hỗ trợ</div>
+                            </div>
+                            <div class="menu-item shadow-hover">
+                                <div class="menu-icon-circle"><i class="fas fa-exclamation-circle"></i></div>
+                                <div class="menu-text">Báo cáo sự cố</div>
+                            </div>
+                        </div>
+                        <div id="language-menu-view" class="menu-view" style="display: none;">
+                            <div class="menu-header">
+                                <div class="menu-icon-circle back-btn" id="back-to-settings-from-lang">
+                                    <i class="fas fa-arrow-left"></i>
+                                </div>
+                                <h2>Ngôn ngữ</h2>
+                            </div>
+                            <div class="menu-item shadow-hover" id="languageListTrigger">
+                                <div class="menu-icon-circle"><i class="fas fa-globe-asia"></i></div>
+                                <div class="menu-text" style="flex-direction: column; align-items: flex-start;">
+                                    <span>Ngôn ngữ trên Facebook</span>
+                                    <span style="font-size: 13px; color: var(--text-secondary); font-weight: 400;">Tiếng Việt</span>
+                                </div>
+                                <i class="fas fa-chevron-right menu-arrow-icon"></i>
+                            </div>
+                            <div class="menu-item shadow-hover">
+                                <div class="menu-icon-circle"><i class="fas fa-cog"></i></div>
+                                <div class="menu-text">Xem tất cả cài đặt</div>
+                            </div>
+                        </div>
+
+                        <div id="language-list-view" class="menu-view" style="display: none;">
+                            <div class="menu-header">
+                                <div class="menu-icon-circle back-btn" id="back-to-lang-from-list">
+                                    <i class="fas fa-arrow-left"></i>
+                                </div>
+                                <h2>Ngôn ngữ trên Facebook</h2>
+                            </div>
+                            <div class="menu-search-bar">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="Tìm kiếm ngôn ngữ">
+                            </div>
+                            <div class="language-list">
+                                <div class="language-list-item active">
+                                    <div class="lang-info">
+                                        <div class="lang-name">Tiếng Việt</div>
+                                        <div class="lang-desc">Tiếng Việt · Mới đây</div>
+                                    </div>
+                                    <i class="fas fa-check lang-check"></i>
+                                </div>
+                                <div class="language-list-item">
+                                    <div class="lang-info">
+                                        <div class="lang-name">English (US)</div>
+                                        <div class="lang-desc">Tiếng Anh (Mỹ) · Mới đây</div>
+                                    </div>
+                                </div>
+                                <div class="language-list-item">
+                                    <div class="lang-info">
+                                        <div class="lang-name">中文(台灣)</div>
+                                        <div class="lang-desc">Tiếng Trung phồn thể (Đài Loan) · Gợi ý</div>
+                                    </div>
+                                </div>
+                                <div class="language-list-item">
+                                    <div class="lang-info">
+                                        <div class="lang-name">Español</div>
+                                        <div class="lang-desc">Tiếng Tây Ban Nha · Gợi ý</div>
+                                    </div>
+                                </div>
+                                <div class="language-list-item">
+                                    <div class="lang-info">
+                                        <div class="lang-name">Português (Brasil)</div>
+                                        <div class="lang-desc">Tiếng Bồ Đào Nha (Brazil) · Gợi ý</div>
+                                    </div>
+                                </div>
+                                <div class="language-list-item">
+                                    <div class="lang-info">
+                                        <div class="lang-name">Af-Soomaali</div>
+                                        <div class="lang-desc">Tiếng Somali</div>
+                                    </div>
+                                </div>
+                                <div class="language-list-item">
+                                    <div class="lang-info">
+                                        <div class="lang-name">Afrikaans</div>
+                                        <div class="lang-desc">Tiếng Afrikaans</div>
+                                    </div>
+                                </div>
+                                <div class="language-list-item">
+                                    <div class="lang-info">
+                                        <div class="lang-name">Azərbaycan dili</div>
+                                        <div class="lang-desc">Tiếng Azerbaijan</div>
+                                    </div>
+                                </div>
+                                <div class="language-list-item">
+                                    <div class="lang-info">
+                                        <div class="lang-name">Bahasa Indonesia</div>
+                                        <div class="lang-desc">Tiếng Indonesia</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ========== BẢNG THÔNG BÁO ========== -->
+        <div class="notification-panel" id="notificationPanel">
+            <div class="noti-header">
+                <div class="noti-header-left">
+                    <h3>Thông báo</h3>
+                    <div class="noti-tabs">
+                        <button class="active">Tất cả</button>
+                        <button>Chưa đọc</button>
+                    </div>
+            </div>
+        </div>
+
+        <div class="noti-section-title">
+            <h4>Mới</h4>
+            <a href="#" class="view-all">Xem tất cả</a>
+        </div>
+
+        <div class="noti-list">
+            <div class="noti-item unread">
+                <img src="messenger-clone/assets/images/avatar-default.png" alt="">
+                <div class="noti-text">
+                    <p><b>Nguyễn Mai Anh</b> 💙 CHI HỘI MÁU 08/5 QUYẾT TÂM VÌ MỌI NGƯỜI</p>
+                    <span>19 giờ</span>
+                </div>
+                <div class="noti-right">
+                    <button class="icon-btn noti-more">
+                    <img src="messenger-clone/assets/icons/dots.svg" alt="">
+                    </button>
+                    <span class="dot"></span>
+
+                    <!-- menu dropdown -->
+                    <div class="noti-menu-box">
+                        <ul>
+                            <li><i>✔</i> Đánh dấu là chưa đọc</li>
+                            <li><i>✖</i> Xóa thông báo này</li>
+                            <li><i>⚙️</i> Báo cáo sự cố cho đội ngũ phụ trách thông báo</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="noti-item unread">
+                <img src="messenger-clone/assets/images/contact-1.png" alt="">
+                <div class="noti-text">
+                    <p><b>Tìm việc làm Parttime Cầu Giấy</b>: Sinh viên giờ chê công việc có dấu thực tập...</p>
+                    <span>1 ngày</span>
+                </div>
+                <div class="noti-right">
+                    <button class="icon-btn noti-more">
+                    <img src="messenger-clone/assets/icons/dots.svg" alt="">
+                    </button>
+                    <span class="dot"></span>
+
+                    <!-- menu dropdown -->
+                    <div class="noti-menu-box">
+                        <ul>
+                            <li><i>✔</i> Đánh dấu là chưa đọc</li>
+                            <li><i>✖</i> Xóa thông báo này</li>
+                            <li><i>⚙️</i> Báo cáo sự cố cho đội ngũ phụ trách thông báo</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="noti-item unread">
+                <img src="messenger-clone/assets/images/contact-2.png" alt="">
+                <div class="noti-text">
+                    <p><b>Đại Học Đừng Học Đại</b>: Có những quyết định lớn bắt đầu từ một ngày trải nghiệm...</p>
+                    <span>4 giờ</span>
+                </div>
+
+                <div class="noti-right">
+                    <button class="icon-btn noti-more">
+                    <img src="messenger-clone/assets/icons/dots.svg" alt="">
+                    </button>
+                    <span class="dot"></span>
+
+                    <!-- menu dropdown -->
+                    <div class="noti-menu-box">
+                        <ul>
+                            <li><i>✔</i> Đánh dấu là chưa đọc</li>
+                            <li><i>✖</i> Xóa thông báo này</li>
+                            <li><i>⚙️</i> Báo cáo sự cố cho đội ngũ phụ trách thông báo</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        </div>
+
+        <!-- ========== TRANG "XEM TẤT CẢ THÔNG BÁO" (FULL) ========== -->
+        <div id="notificationFullPage" class="noti-full">
+            <div class="noti-full-container">
+                <div class="noti-full-header">
+                    <button class="back-btn">←</button>
+                    <h2>Thông báo</h2>
+                </div>
+                <div class="noti-tabs">
+                    <button class="active">Tất cả</button>
+                    <button>Chưa đọc</button>
+                </div>
+                <div class="noti-full-list">
+                    
+                </div>
+            </div>
+        </div>
+
+    
+    </header>
+
+    <div class="main-container">
+        
+        <div class="cover-photo-container">
+            <div class="cover-photo">
+                <div class="add-cover-btn">
+                    <i class="fas fa-camera"></i> Thêm ảnh bìa
+                </div>
+            </div>
+
+            <div class="profile-section-wrapper">
+                <div class="profile-info">
+                    <div class="profile-pic-container">
+                        <div class="profile-pic">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="camera-icon">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                    </div>
+                    <div class="profile-details">
+                        <h1 class="profile-name">Lê Ngọc</h1>
+                        <div class="friend-count">74 người bạn</div>
+                    </div>
+                    <div class="profile-actions">
+                        <button class="btn btn-primary"><i class="fas fa-plus"></i> Thêm vào tin</button>
+                        <button class="btn btn-secondary"><i class="fas fa-pen"></i> Chỉnh sửa trang cá nhân</button>
+                    </div>
+                </div>
+
+                <div class="profile-nav">
+                    <div class="p-nav-item active">Bài viết</div>
+                    <div class="p-nav-item">Giới thiệu</div>
+                    <div class="p-nav-item">Bạn bè</div>
+                    <div class="p-nav-item">Ảnh</div>
+                    <div class="p-nav-item">Reels</div>
+                    <div class="p-nav-item">Check in</div>
+                    <div class="p-nav-item p-nav-more">Xem thêm <i class="fas fa-caret-down" style="margin-left: 6px;"></i></div>
+                    <div style="flex-grow: 1;"></div>
+                    <div class="btn btn-secondary" style="width: 48px;"><i class="fas fa-ellipsis-h" style="margin:0;"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <div class="col-left">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Giới thiệu</span>
+                    </div>
+                    <div class="bio-text">Tranquility in a chaotic world</div>
+                    <button class="btn btn-secondary" style="width: 100%; margin-bottom: 16px;">Chỉnh sửa tiểu sử</button>
+                    
+                    <div class="intro-item">
+                        <i class="fas fa-home"></i>
+                        <span>Sống tại <strong>Phu Tho, Phú Thọ, Vietnam</strong></span>
+                    </div>
+                    <div class="intro-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Đến từ <strong>Phu Tho, Phú Thọ, Vietnam</strong></span>
+                    </div>
+
+                    <button class="btn btn-secondary" style="width: 100%; margin-bottom: 16px;">Chỉnh sửa chi tiết</button>
+                    <button class="btn btn-secondary" style="width: 100%;">Thêm nội dung đáng chú ý</button>
+                </div>
+
+                <div class="card">
+                     <div class="card-header">
+                        <span class="card-title">Ảnh</span>
+                        <span class="link-blue">Xem tất cả ảnh</span>
+                    </div>
+                    <div class="photos-grid">
+                        <div class="photo-thumb" style="background-color: #d32f2f;"></div>
+                        <div class="photo-thumb" style="background-color: #555;"></div>
+                        <div class="photo-thumb" style="background-color: #fbc02d;"></div>
+                        <div class="photo-thumb" style="background-color: #90a4ae;"></div>
+                        </div>
+                </div>
+                 <div class="card">
+                    <div class="card-header">
+                       <span class="card-title">Bạn bè</span>
+                       <span class="link-blue">Xem tất cả bạn bè</span>
+                   </div>
+                   <div style="color: var(--text-secondary);">74 người bạn</div>
+               </div>
+            </div>
+
+            <div class="col-right">
+                <div class="card">
+                    <div class="composer">
+                        <div class="composer-avatar"></div> <div class="composer-input">Bạn đang nghĩ gì?</div>
+                    </div>
+                    <div class="composer-actions">
+                        <div class="c-action"><i class="fas fa-video" style="color: #f02849;"></i> Video trực tiếp</div>
+                        <div class="c-action"><i class="fas fa-images" style="color: #45bd62;"></i> Ảnh/video</div>
+                        <div class="c-action"><i class="fas fa-flag" style="color: #36a4fa;"></i> Cột mốc</div>
+                    </div>
+                </div>
+
+                <div class="feed-filters">
+                    <div class="filter-title">Bài viết</div>
+                    <div class="filter-actions">
+                        <button class="btn btn-secondary"><i class="fas fa-sliders-h"></i> Bộ lọc</button>
+                        <button class="btn btn-secondary"><i class="fas fa-cog"></i> Quản lý bài viết</button>
+                    </div>
+                </div>
+
+                 <div class="card" style="padding: 0; overflow: hidden;">
+                    <div style="display: flex; border-bottom: 1px solid var(--divider);">
+                        <div style="flex: 1; padding: 12px; text-align: center; font-weight: 600; color: var(--accent-blue); border-bottom: 3px solid var(--accent-blue);"><i class="fas fa-bars"></i> Chế độ xem danh sách</div>
+                        <div style="flex: 1; padding: 12px; text-align: center; font-weight: 600; color: var(--text-secondary); cursor: pointer;"><i class="fas fa-th-large"></i> Chế độ xem lưới</div>
+                    </div>
+                </div>
+
+                <div class="card" style="padding-bottom: 0;">
+                    <div class="post-header">
+                        <div class="post-avatar"></div>
+                        <div class="post-meta">
+                            <div class="post-author">Lê Ngọc <span style="font-weight: normal; color: var(--text-secondary);">đã cập nhật ảnh đại diện của cô ấy.</span></div>
+                            <div class="post-time">26 tháng 7, 2023 · <i class="fas fa-lock" title="Chỉ mình tôi"></i></div>
+                        </div>
+                        <i class="fas fa-ellipsis-h" style="color: var(--text-secondary); cursor: pointer;"></i>
+                    </div>
+                    <div class="post-image-placeholder mimic-post-image">
+                        <br><br><br>
+                        <div style="border: 2px solid white; padding: 10px; border-radius: 10px; display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.9); color: black;">
+                            <span style="color: #d32f2f; font-weight: bold;">GIỌT HỒNG TRI ÂN</span>
+                            <i class="fas fa-plus-circle" style="color: red;"></i>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+
+    <!-- ========== POST POPUP (XEM BÀI VIẾT NỔI) ========== -->
+    <div id="postModal" class="post-modal">
+        <div class="post-overlay"></div>
+        <div class="post-popup">
+        <div class="post-popup-header">
+            <h3 id="postPopupTitle">Bài viết</h3>
+            <button class="post-popup-close" id="closePostModal">✖</button>
+        </div>
+        <div id="postPopupContent" class="post-popup-content">
+            <!-- Nội dung bài viết sẽ được chèn bằng JS -->
+        </div>
+        </div>
+    </div>
+
+
+    <script src="1.js"></script>
+</body>
+</html>
