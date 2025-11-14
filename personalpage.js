@@ -19,11 +19,13 @@ document.addEventListener('DOMContentLoaded', function () {
     profileTrigger.addEventListener('click', function (e) {
       e.stopPropagation();
       const isActive = profileMenu.classList.toggle('active');
-      if (isActive) showMenuView('main-menu-view');
+      if (isActive) {
+            showMenuView('main-menu-view');  // Hiển thị menu chính khi bật menu
+      }
     });
 
     document.addEventListener('click', function (e) {
-      if (profileMenu.classList.contains('active') && !profileMenu.contains(e.target)) {
+      if (profileMenu.classList.contains('active') && !profileMenu.contains(e.target) && !profileTrigger.contains(e.target)) {
         profileMenu.classList.remove('active');
       }
     });
@@ -57,12 +59,21 @@ document.addEventListener('DOMContentLoaded', function () {
     backToLang && backToLang.addEventListener('click', () => showMenuView('language-menu-view'));
 
     const darkModeRadios = document.getElementsByName('darkmode');
-    darkModeRadios.forEach((radio) =>
-      radio.addEventListener('change', function () {
-        document.body.classList.toggle('dark-mode', this.value === 'on');
-      })
-    );
-  }
+    darkModeRadios.forEach(radio => {
+    radio.addEventListener('change', function () {
+        const isDark = this.value === "on";
+        document.body.classList.toggle("dark-mode", isDark);
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+    });
+    });
+
+    // Load lại theme khi mở web
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+        document.body.classList.add("dark-mode");
+        document.querySelector('input[name="darkmode"][value="on"]').checked = true;
+    }
+}
 
   // ====================== NOTIFICATION PANEL ======================
   // Hỗ trợ cả id="notiBtn" hoặc nút có title="Thông báo"
