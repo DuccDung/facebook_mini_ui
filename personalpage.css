@@ -2256,3 +2256,32 @@ body.dark-mode .reaction-popup {
     border-radius: 50%;
     object-fit: cover;
 }
+/* ======================================================== */
+/* === CHỈNH SỬA ICON CẢM XÚC NHỎ (PHẦN THỐNG KÊ) === */
+/* ======================================================== */
+
+/* 1. Căn chỉnh nhóm icon thẳng hàng */
+.post-stats .reaction-icon-group {
+    display: flex;
+    align-items: center;
+    margin-right: 6px; /* Khoảng cách giữa icon và chữ */
+}
+
+/* 2. Thu nhỏ ảnh và tạo hiệu ứng xếp chồng */
+.post-stats .reaction-icon-group img {
+    width: 18px;       /* Kích thước chuẩn Facebook */
+    height: 18px;
+    border-radius: 50%; /* Bo tròn */
+    border: 2px solid #fff; /* Viền trắng để tách các icon khi xếp chồng */
+    margin-right: -4px; /* Số âm để các icon đè lên nhau chút xíu */
+    object-fit: cover;
+
+    /* Đảm bảo icon không bị méo */
+    display: block;
+    position: relative;
+}
+
+/* 3. Sắp xếp thứ tự đè lên nhau (Icon đầu nằm trên cùng) */
+.post-stats .reaction-icon-group img:nth-child(1) { z-index: 3; }
+.post-stats .reaction-icon-group img:nth-child(2) { z-index: 2; }
+.post-stats .reaction-icon-group img:nth-child(3) { z-index: 1; }
