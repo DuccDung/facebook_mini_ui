@@ -196,7 +196,22 @@ body {
 .icon-btn:hover {
     background: var(--hover-bg);
 }
+/* Tìm class này trong file CSS */
+.nav-user-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    background-color: #e4e6eb; /* Màu nền xám nếu ảnh chưa load kịp */
+}
 
+/* Thêm đoạn này để ảnh bên trong luôn tròn đẹp */
+.nav-user-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 .icon-btn img {
     width: 20px;
     height: 20px;
@@ -2177,4 +2192,67 @@ body.dark-mode .reaction-popup {
 /* 3. Đảm bảo hộp chứa nằm đè lên mọi thứ */
 .reaction-popup {
     z-index: 9999 !important; /* Ưu tiên hiển thị cao nhất */
+}
+/* ======================================================== */
+/* === CĂN CHỈNH ẢNH ĐẠI DIỆN (FIX AVATAR STYLES) === */
+/* ======================================================== */
+
+/* Class chung để ảnh luôn lấp đầy khung tròn mà không bị méo */
+.img-cover-fit {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Quan trọng: Cắt ảnh cho vừa khung */
+    border-radius: 50%;
+    display: block;
+}
+
+/* 1. Ảnh đại diện lớn (Cover) */
+.profile-pic img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* 2. Ảnh nhỏ trên Header */
+.nav-user-icon img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* 3. Ảnh chỗ đăng bài (Composer) */
+.composer-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 12px; /* Khoảng cách với ô input */
+    background-color: var(--bg-third); /* Màu nền dự phòng */
+}
+
+/* 4. Ảnh trong bài viết (Post Header) */
+.post-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 12px;
+    background-color: transparent;
+}
+
+/* 5. Ảnh chỗ bình luận (Comment) */
+.my-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    flex-shrink: 0; /* Không bị co lại khi màn hình nhỏ */
+}
+
+.my-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
 }
