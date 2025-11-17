@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tin - Facebook</title>
+    <link rel="stylesheet" href="css/story-viewer.css">
+</head>
+<body>
+    <div class="story-viewer-layout">
+        <!-- Left Sidebar -->
+        <div class="story-sidebar">
+            <div class="sidebar-header">
+                <button class="back-btn" id="backBtn" title="Quay lại">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
+                <div class="sidebar-logo">
+                    <svg width="40" height="40" viewBox="0 0 36 36" fill="url(#gradient)">
+                        <defs>
+                            <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#0866FF"/>
+                                <stop offset="100%" style="stop-color:#0352CC"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M20.3 4.5H15.8C9.4 4.5 4.5 9.4 4.5 15.8v4.5c0 6.4 4.9 11.2 11.3 11.2h4.5c6.4 0 11.2-4.8 11.2-11.2v-4.5c0-6.4-4.8-11.3-11.2-11.3zm-2.2 20.6c-3.7 0-6.8-3-6.8-6.8s3-6.8 6.8-6.8 6.8 3 6.8 6.8-3 6.8-6.8 6.8z"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="sidebar-title">
+                <h1>Tin</h1>
+                <p>Kho lưu trữ · Cài đặt</p>
+            </div>
+
+            <div class="sidebar-section">
+                <h2>Tin của bạn</h2>
+                <div class="story-item create-story">
+                    <div class="story-avatar-wrapper">
+                        <img src="messenger-clone/assets/images/contact-1.png" alt="Your Avatar" class="story-user-avatar">
+                        <div class="add-story-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="story-item-info">
+                        <div class="story-item-name">Tạo tin</div>
+                        <div class="story-item-desc">Bạn có thể chia sẻ ảnh hoặc viết gì đó.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h2>Tất cả tin</h2>
+                <div class="story-list" id="storyList"></div>
+            </div>
+        </div>
+
+        <!-- Main Story Viewer -->
+        <div class="story-main">
+            <!-- Navigation Arrows (Outside story container) -->
+            <button class="nav-arrow nav-arrow-left" id="prevArrow" title="Trước">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                </svg>
+            </button>
+
+            <div class="story-container">
+                <!-- Progress Bars -->
+                <div class="progress-container" id="progressContainer"></div>
+
+                <!-- Story Header -->
+                <div class="story-header">
+                    <div class="story-author">
+                        <img src="" alt="Avatar" class="story-avatar" id="storyAvatar">
+                        <div class="story-info">
+                            <div class="story-name" id="storyName"></div>
+                            <div class="story-time" id="storyTime"></div>
+                        </div>
+                    </div>
+                    <div class="story-actions">
+                        <button class="action-btn" id="pauseBtn" title="Tạm dừng">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                                <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                            </svg>
+                        </button>
+                        <button class="action-btn" id="muteBtn" title="Tắt tiếng">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                                <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
+                            </svg>
+                        </button>
+                        <button class="action-btn" title="Tùy chọn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                                <circle cx="12" cy="5" r="2"/>
+                                <circle cx="12" cy="12" r="2"/>
+                                <circle cx="12" cy="19" r="2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Story Content -->
+                <div class="story-content" id="storyContent">
+                    <div class="no-story-selected">
+                        <svg width="96" height="96" viewBox="0 0 24 24" fill="rgba(255,255,255,0.3)">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <h3>Chọn tin để bắt đầu</h3>
+                        <p>Chọn từ danh sách bên trái để xem tin của bạn bè.</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Areas -->
+                <div class="nav-area prev" id="prevArea"></div>
+                <div class="nav-area next" id="nextArea"></div>
+
+                <!-- Story Indicators -->
+                <div class="story-indicator prev" id="prevIndicator">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                    </svg>
+                    <span>Trước</span>
+                </div>
+                <div class="story-indicator next" id="nextIndicator">
+                    <span>Tiếp</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                        <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                    </svg>
+                </div>
+
+                <!-- Pause Indicator -->
+                <div class="pause-indicator" id="pauseIndicator">
+                    <div class="pause-icon">
+                        <div class="pause-bar"></div>
+                        <div class="pause-bar"></div>
+                    </div>
+                </div>
+
+                <!-- Seen Indicator -->
+                <div class="seen-indicator" id="seenIndicator">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                    </svg>
+                    <span id="seenCount">0</span>
+                </div>
+
+                <!-- Story Footer -->
+                <div class="story-footer">
+                    <div class="reactions-container">
+                        <button class="reaction-btn" data-reaction="like" title="Thích">👍</button>
+                        <button class="reaction-btn" data-reaction="love" title="Yêu thích">❤️</button>
+                        <button class="reaction-btn" data-reaction="haha" title="Haha">😆</button>
+                        <button class="reaction-btn" data-reaction="wow" title="Wow">😮</button>
+                        <button class="reaction-btn" data-reaction="sad" title="Buồn">😢</button>
+                        <button class="reaction-btn" data-reaction="angry" title="Phẫn nộ">😠</button>
+                    </div>
+                    <div class="reply-container">
+                        <input type="text" class="reply-input" placeholder="Gửi tin nhắn" id="replyInput">
+                        <button class="send-btn" id="sendBtn">Gửi</button>
+                    </div>
+                </div>
+            </div>
+
+            <button class="nav-arrow nav-arrow-right" id="nextArrow" title="Tiếp">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script src="js/story-viewer.js"></script>
+</body>
+</html>

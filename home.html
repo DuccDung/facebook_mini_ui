@@ -2,13 +2,15 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>Facebook - Trang chủ</title>
   <link rel="stylesheet" href="css/home.css" />
   <link rel="icon" href="messenger-clone/assets/icons/facebook.svg">
   <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 
+
 </head>
+
 <body>
   <!-- Top Navigation Bar -->
   <header class="topbar">
@@ -57,6 +59,112 @@
         <img src="messenger-clone/assets/images/avatar-default.png" alt="Profile">
       </button>
     </div>
+        <!-- ========== BẢNG THÔNG BÁO ========== -->
+    <div class="notification-panel" id="notificationPanel">
+      <div class="noti-header">
+        <div class="noti-header-left">
+          <h3>Thông báo</h3>
+          <div class="noti-tabs">
+            <button class="active">Tất cả</button>
+            <button>Chưa đọc</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="noti-section-title">
+        <h4>Mới</h4>
+        <a href="#" class="view-all">Xem tất cả</a>
+      </div>
+
+      <div class="noti-list">
+        <div class="noti-item unread">
+          <img src="messenger-clone/assets/images/avatar-default.png" alt="">
+          <div class="noti-text">
+            <p><b>Nguyễn Mai Anh</b> 💙 CHI HỘI MÁU 08/5 QUYẾT TÂM VÌ MỌI NGƯỜI</p>
+            <span>19 giờ</span>
+          </div>
+          <div class="noti-right">
+            <button class="icon-btn noti-more">
+              <img src="messenger-clone/assets/icons/dots.svg" alt="">
+            </button>
+            <span class="dot"></span>
+
+            <!-- menu dropdown -->
+            <div class="noti-menu-box">
+              <ul>
+                <li><i>✔</i> Đánh dấu là chưa đọc</li>
+                <li><i>✖</i> Xóa thông báo này</li>
+                <li><i>⚙️</i> Báo cáo sự cố cho đội ngũ phụ trách thông báo</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="noti-item unread">
+          <img src="messenger-clone/assets/images/contact-1.png" alt="">
+          <div class="noti-text">
+            <p><b>Tìm việc làm Parttime Cầu Giấy</b>: Sinh viên giờ chê công việc có dấu thực tập...</p>
+            <span>1 ngày</span>
+          </div>
+          <div class="noti-right">
+            <button class="icon-btn noti-more">
+              <img src="messenger-clone/assets/icons/dots.svg" alt="">
+            </button>
+            <span class="dot"></span>
+
+            <!-- menu dropdown -->
+            <div class="noti-menu-box">
+              <ul>
+                <li><i>✔</i> Đánh dấu là chưa đọc</li>
+                <li><i>✖</i> Xóa thông báo này</li>
+                <li><i>⚙️</i> Báo cáo sự cố cho đội ngũ phụ trách thông báo</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="noti-item unread">
+          <img src="messenger-clone/assets/images/contact-2.png" alt="">
+          <div class="noti-text">
+            <p><b>Đại Học Đừng Học Đại</b>: Có những quyết định lớn bắt đầu từ một ngày trải nghiệm...</p>
+            <span>4 giờ</span>
+          </div>
+
+          <div class="noti-right">
+            <button class="icon-btn noti-more">
+              <img src="messenger-clone/assets/icons/dots.svg" alt="">
+            </button>
+            <span class="dot"></span>
+
+            <!-- menu dropdown -->
+            <div class="noti-menu-box">
+              <ul>
+                <li><i>✔</i> Đánh dấu là chưa đọc</li>
+                <li><i>✖</i> Xóa thông báo này</li>
+                <li><i>⚙️</i> Báo cáo sự cố cho đội ngũ phụ trách thông báo</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========== TRANG "XEM TẤT CẢ THÔNG BÁO" (FULL) ========== -->
+    <div id="notificationFullPage" class="noti-full">
+      <div class="noti-full-container">
+        <div class="noti-full-header">
+          <button class="back-btn">←</button>
+          <h2>Thông báo</h2>
+        </div>
+        <div class="noti-tabs">
+          <button class="active">Tất cả</button>
+          <button>Chưa đọc</button>
+        </div>
+        <div class="noti-full-list"></div>
+      </div>
+    </div>
+
   </header>
 
   <!-- Main Content -->
@@ -469,6 +577,258 @@
     </aside>
   </div>
 
-  <script src="js/home.js"></script>
+  <!-- ========== STORY VIEWER MODAL ========== -->
+  <div id="storyViewer" class="story-viewer">
+    <button class="story-viewer-close" id="closeStoryViewer">✖</button>
+    <button class="story-nav-btn story-prev" id="prevStory">‹</button>
+    <button class="story-nav-btn story-next" id="nextStory">›</button>
+    
+    <div class="story-viewer-content">
+      <div class="story-viewer-header">
+        <div class="story-viewer-user">
+          <img src="" alt="" class="story-viewer-avatar" id="storyViewerAvatar">
+          <div class="story-viewer-info">
+            <div class="story-viewer-name" id="storyViewerName"></div>
+            <div class="story-viewer-time" id="storyViewerTime"></div>
+          </div>
+        </div>
+        <div class="story-progress-bars" id="storyProgressBars"></div>
+      </div>
+      
+      <div class="story-viewer-image">
+        <img src="" alt="" id="storyViewerImage">
+      </div>
+      
+      <div class="story-viewer-footer">
+        <input type="text" placeholder="Trả lời..." class="story-reply-input">
+        <button class="story-action-btn">❤️</button>
+        <button class="story-action-btn">📤</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== REACTIONS PICKER ========== -->
+  <div id="reactionsPicker" class="reactions-picker">
+    <button class="reaction-btn" data-reaction="like">
+      <span class="reaction-emoji">👍</span>
+      <span class="reaction-label">Thích</span>
+    </button>
+    <button class="reaction-btn" data-reaction="love">
+      <span class="reaction-emoji">❤️</span>
+      <span class="reaction-label">Yêu thích</span>
+    </button>
+    <button class="reaction-btn" data-reaction="haha">
+      <span class="reaction-emoji">😆</span>
+      <span class="reaction-label">Haha</span>
+    </button>
+    <button class="reaction-btn" data-reaction="wow">
+      <span class="reaction-emoji">😮</span>
+      <span class="reaction-label">Wow</span>
+    </button>
+    <button class="reaction-btn" data-reaction="sad">
+      <span class="reaction-emoji">😢</span>
+      <span class="reaction-label">Buồn</span>
+    </button>
+    <button class="reaction-btn" data-reaction="angry">
+      <span class="reaction-emoji">😠</span>
+      <span class="reaction-label">Phẫn nộ</span>
+    </button>
+  </div>
+
+  <!-- ========== REACTIONS LIST MODAL ========== -->
+  <div id="reactionsModal" class="reactions-modal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content reactions-modal-content">
+      <div class="modal-header">
+        <h3>Cảm xúc</h3>
+        <button class="modal-close" id="closeReactionsModal">✖</button>
+      </div>
+      <div class="reactions-tabs">
+        <button class="reactions-tab active" data-tab="all">
+          <span class="tab-label">Tất cả</span>
+          <span class="tab-count">324</span>
+        </button>
+        <button class="reactions-tab" data-tab="like">
+          <span class="reaction-emoji-small">👍</span>
+          <span class="tab-count">156</span>
+        </button>
+        <button class="reactions-tab" data-tab="love">
+          <span class="reaction-emoji-small">❤️</span>
+          <span class="tab-count">98</span>
+        </button>
+        <button class="reactions-tab" data-tab="care">
+          <span class="reaction-emoji-small">🤗</span>
+          <span class="tab-count">45</span>
+        </button>
+        <button class="reactions-tab" data-tab="haha">
+          <span class="reaction-emoji-small">😆</span>
+          <span class="tab-count">25</span>
+        </button>
+      </div>
+      <div class="reactions-list" id="reactionsList">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== COMMENTS MODAL ========== -->
+  <div id="commentsModal" class="comments-modal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content comments-modal-content">
+      <div class="modal-header">
+        <h3>Bình luận</h3>
+        <button class="modal-close" id="closeCommentsModal">✖</button>
+      </div>
+      
+      <div class="comments-scrollable-area">
+        <div class="comments-post-preview">
+          <div class="preview-post-header">
+            <img src="messenger-clone/assets/images/contact-1.png" alt="" class="preview-post-avatar">
+            <div class="preview-post-author-info">
+              <div class="preview-post-author">Lê Ngọc</div>
+              <div class="preview-post-time">2 giờ · <img src="messenger-clone/assets/icons/users.svg" alt="" style="width: 12px; opacity: 0.6;"></div>
+            </div>
+          </div>
+          <div class="preview-post-content">
+            <p>Hôm nay thật tuyệt vời! 🌟 Cảm ơn mọi người đã luôn ủng hộ mình ❤️</p>
+          </div>
+          <div class="preview-post-image">
+            <img src="messenger-clone/assets/images/contact-1.png" alt="Post image">
+          </div>
+        </div>
+        
+        <div class="comments-list" id="commentsList">
+          <!-- Comments populated by JS -->
+        </div>
+      </div>
+      
+      <div class="comment-input-wrapper">
+        <img src="messenger-clone/assets/images/avatar-default.png" alt="" class="comment-avatar">
+        <div class="comment-input-container">
+          <div id="commentImagePreview" class="comment-image-preview"></div>
+          <textarea placeholder="Viết bình luận..." class="comment-input" id="commentInput" rows="1"></textarea>
+          <div class="comment-actions-btns">
+            <button class="comment-action-btn" title="Biểu tượng cảm xúc">😊</button>
+            <button class="comment-action-btn" id="commentPhotoBtn" title="Đính kèm ảnh">📷</button>
+            <button class="comment-action-btn" title="GIF">GIF</button>
+          </div>
+        </div>
+        <button class="comment-send-btn" id="sendComment">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/>
+          </svg>
+        </button>
+        <input type="file" id="commentImageInput" accept="image/*" style="display: none;">
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== CREATE POST MODAL ========== -->
+  <div id="createPostModal" class="create-post-modal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content create-post-modal-content">
+      <div class="modal-header">
+        <h3>Tạo bài viết</h3>
+        <button class="modal-close" id="closeCreatePostModal">✖</button>
+      </div>
+      
+      <div class="create-post-user">
+        <img src="messenger-clone/assets/images/avatar-default.png" alt="" class="create-post-avatar">
+        <div>
+          <div class="create-post-username">Tên của bạn</div>
+          <select class="create-post-privacy">
+            <option>🌍 Công khai</option>
+            <option>👥 Bạn bè</option>
+            <option>🔒 Chỉ mình tôi</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="create-post-textarea-wrapper">
+        <textarea id="createPostTextarea" class="create-post-textarea" placeholder="Bạn đang nghĩ gì?"></textarea>
+        <div class="create-post-preview" id="createPostPreview"></div>
+      </div>
+      
+      <div class="create-post-options">
+        <div class="create-post-option-label">Thêm vào bài viết của bạn</div>
+        <div class="create-post-option-btns">
+          <button class="create-post-option-btn" data-option="photo" title="Ảnh/video">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#45bd62">
+              <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+            </svg>
+          </button>
+          <button class="create-post-option-btn" data-option="tag" title="Gắn thẻ người khác">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#1877f2">
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+          </button>
+          <button class="create-post-option-btn" data-option="feeling" title="Cảm xúc/hoạt động">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#f7b928">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
+            </svg>
+          </button>
+          <button class="create-post-option-btn" data-option="location" title="Vị trí">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#f5533d">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      
+      <input type="file" id="createPostFileInput" accept="image/*,video/*" multiple style="display: none;">
+      
+      <button class="create-post-submit-btn" id="submitPost">Đăng</button>
+    </div>
+  </div>
+
+  <!-- ========== SHARE POST MODAL ========== -->
+  <div id="sharePostModal" class="share-post-modal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content share-post-modal-content">
+      <div class="modal-header">
+        <h3>Chia sẻ bài viết</h3>
+        <button class="modal-close" id="closeSharePostModal">✖</button>
+      </div>
+      
+      <div class="share-options">
+        <button class="share-option">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
+          </svg>
+          <div>
+            <div class="share-option-title">Chia sẻ ngay (Công khai)</div>
+            <div class="share-option-desc">Chia sẻ lên Bảng tin của bạn</div>
+          </div>
+        </button>
+        
+        <button class="share-option">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+          </svg>
+          <div>
+            <div class="share-option-title">Gửi trong Messenger</div>
+            <div class="share-option-desc">Chia sẻ với bạn bè qua Messenger</div>
+          </div>
+        </button>
+        
+        <button class="share-option">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+          </svg>
+          <div>
+            <div class="share-option-title">Chia sẻ vào Story</div>
+            <div class="share-option-desc">Chia sẻ vào Story của bạn</div>
+          </div>
+        </button>
+      </div>
+      
+      <div class="share-post-preview" id="sharePostPreview">
+        <!-- Original post preview -->
+      </div>
+    </div>
+  </div>
+
+  <script src="js/home-enhanced.js"></script>
+
 </body>
 </html>
